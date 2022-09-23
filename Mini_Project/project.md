@@ -1,5 +1,5 @@
 ## Subsystem Documentation links
-[link documentation here]
+[Marker Detection Scheme](https://github.com/abimartho/SEED/blob/main/Mini_Project/cv/cv_readme.txt)
 ## Project Board
 4.1 Create a GitHub repository to hold your code and keep track of your project: Abi\
 4.2 Use Open CV to implement the Aruco detection scheme: Abi\
