@@ -5,7 +5,6 @@ function to initialize picamera and adjust white balance
 '''
 
 from picamera import PiCamera
-from picamera.array import PiRGBArray
 import time
 
 def camera_init():
