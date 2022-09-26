@@ -14,3 +14,4 @@ This project controls the position of a wheel using a motor, arduino and rasperr
 | 4.6 Create a simulation of your motor  | Aiden |
 | 4.7 Design a controller for your motor  | Aiden |
 | 4.8 Put everything together  | Sam |
+| Assemble wheel and stand | Abi |
