@@ -7,6 +7,7 @@ Created on Mon Sep 26 10:54:02 2022
 @email: swicklund@mines.edu
 """
 
+from cmath import pi
 import serial
 import time
 import board
