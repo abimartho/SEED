@@ -43,7 +43,7 @@ def ReadfromArduino():
         print("Communication Error")
     return current_val
 
-def SendToArduino();
+def SendToArduino():
     try:
         setPoint = camLoc.aruco_location(camera)
         sendPoint = setPoint.to_bytes(1, "big")
@@ -55,7 +55,7 @@ def SendToArduino();
 setPoint = SendToArduino()
 while True:
     try:
-        currPosition = (ReadfromArduino()/40) * pi;
+        currPosition = (ReadfromArduino()/40) * pi
         lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
