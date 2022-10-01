@@ -16,14 +16,17 @@ import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 import aruco_location as camLoc
 import camera_init
 
+def DoMath(currPos):
+    valueRet = (int(currPos)/40 * pi)
+    return valueRet
 #Function to read serial for LCD
 def ReadfromArduino():
-    try:
-        currentPosition = ser.readline().decode("utf-8").rstrip()
-        #current_val = int.from_bytes(currentPosition, "big")
-        print("serial output : ", currentPosition)
-    except:
-        print("Read Error")
+    ser.reset_input_buffer()
+    currentPosition = ser.readline().decode("utf-8").rstrip()
+    #if currentPosition != '': 
+    print("serial output : ", currentPosition)
+    mathValue = DoMath(currentPosition)
+    return mathValue
         
 def SendToArduino(camera):
     try:
@@ -53,12 +56,15 @@ time.sleep(5)
 #Setup Camera
 camera = camera_init.camera_init()
 setPoint = SendToArduino(camera)
+print("Sleeping 2 seconds to give Arduino time to send something back")
+time.sleep(2)
 
 while True:
     try:
-        ReadfromArduino()
+        #ReadfromArduino()
+        currPosition = ReadfromArduino()
         #currPosition = (ReadfromArduino()/40) * pi
-        #lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
+        lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
 
