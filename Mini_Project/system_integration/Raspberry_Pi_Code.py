@@ -16,6 +16,25 @@ import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 import aruco_location as camLoc
 import camera_init
 
+#Function to read serial for LCD
+def ReadfromArduino():
+    try:
+        currentPosition = ser.readline().decode("utf-8").rstrip()
+        #current_val = int.from_bytes(currentPosition, "big")
+        print("serial output : ", currentPosition)
+    except:
+        print("Read Error")
+        
+def SendToArduino(camera):
+    try:
+        setPoint = camLoc.aruco_location(camera)
+        sendPoint = setPoint.to_bytes(1, "big")
+        ser.write(sendPoint)
+    except:
+        print("Something went Wrong")
+    return setPoint
+
+
 #LCD Setup
 lcd_columns = 16
 lcd_rows = 2
@@ -29,35 +48,17 @@ lcd.color = [0, 100, 0]
 #Set address
 ser = serial.Serial('/dev/ttyACM0', 115200)
 #Wait for connection to complete
-time.sleep(3)
+time.sleep(5)
 
 #Setup Camera
 camera = camera_init.camera_init()
+setPoint = SendToArduino(camera)
 
-#Function to read serial for LCD
-def ReadfromArduino():
-    try:
-        currentPosition = ser.read(1)
-        current_val = int.from_bytes(currentPosition, "big")
-        print("serial output : ", currentPosition)
-    except:
-        print("Communication Error")
-    return current_val
-
-def SendToArduino():
-    try:
-        setPoint = camLoc.aruco_location(camera)
-        sendPoint = setPoint.to_bytes(1, "big")
-        ser.write(sendPoint)
-    except:
-        print("Something went Wrong")
-    return setPoint
-    
-setPoint = SendToArduino()
 while True:
     try:
-        currPosition = (ReadfromArduino()/40) * pi
-        lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
+        ReadfromArduino()
+        #currPosition = (ReadfromArduino()/40) * pi
+        #lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
 
