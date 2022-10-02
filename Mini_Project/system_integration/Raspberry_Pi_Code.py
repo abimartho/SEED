@@ -8,6 +8,7 @@ Created on Mon Sep 26 10:54:02 2022
 """
 
 from cmath import pi
+
 import serial
 import time
 import board
@@ -15,17 +16,21 @@ import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 
 import aruco_location as camLoc
 import camera_init
+import threading
 
-def DoMath(currPos):
-    valueRet = (int(currPos)/40 * pi)
+startTime = time.time()
+
+def DoMath(currPos, valTime):
+    sVal = str(currPos) + " " + str(valTime) + "\n"
+    print(sVal)
+    valueRet = (int(currPos)/1590 * pi)
     return valueRet
 #Function to read serial for LCD
 def ReadfromArduino():
     ser.reset_input_buffer()
     currentPosition = ser.readline().decode("utf-8").rstrip()
-    #if currentPosition != '': 
-    print("serial output : ", currentPosition)
-    mathValue = DoMath(currentPosition)
+    valueTime = int((time.time() - startTime) * 1000)
+    mathValue = DoMath(currentPosition, valueTime)
     return mathValue
         
 def SendToArduino(camera):
@@ -34,7 +39,7 @@ def SendToArduino(camera):
         sendPoint = setPoint.to_bytes(1, "big")
         ser.write(sendPoint)
     except:
-        print("Something went Wrong")
+        print("I couldn't send")
     return setPoint
 
 
@@ -61,12 +66,15 @@ time.sleep(2)
 
 while True:
     try:
-        #ReadfromArduino()
         currPosition = ReadfromArduino()
-        #currPosition = (ReadfromArduino()/40) * pi
+        #print("Start of LCD: ",time.time())
+        #This takes so gosh darn long
         lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
+        #print("End of LCD: ", time.time())
+    except KeyboardInterrupt:
+        print("Closing File")
+        lcd.color = [0, 0, 0]
+        lcd.clear()
+        print("File Closed")
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
-
-lcd.color = [0, 0, 0]
-lcd.clear()
