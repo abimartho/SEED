@@ -13,5 +13,5 @@ This project controls the position of a wheel using a motor, arduino and rasperr
 | 4.5 Set up communication between the Raspberry Pi, Arduino and LCD  | Sam | x |
 | 4.6 Create a simulation of your motor  | Aiden | x |
 | 4.7 Design a controller for your motor  | Aiden | x |
-| 4.8 Put everything together  | Sam |  |
+| 4.8 Put everything together  | All |  |
 | Assemble wheel and stand | Abi | x |
