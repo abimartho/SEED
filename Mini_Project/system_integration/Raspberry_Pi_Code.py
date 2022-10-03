@@ -22,7 +22,7 @@ startTime = time.time()
 
 def DoMath(currPos, valTime):
     sVal = str(currPos) + " " + str(valTime) + "\n"
-    print(sVal)
+    #print(sVal)
     valueRet = (int(currPos)/1590 * pi)
     return valueRet
 #Function to read serial for LCD
@@ -67,14 +67,6 @@ time.sleep(2)
 while True:
     try:
         currPosition = ReadfromArduino()
-        #print("Start of LCD: ",time.time())
-        #This takes so gosh darn long
         lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
-        #print("End of LCD: ", time.time())
-    except KeyboardInterrupt:
-        print("Closing File")
-        lcd.color = [0, 0, 0]
-        lcd.clear()
-        print("File Closed")
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
