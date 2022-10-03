@@ -7,6 +7,10 @@ Created on Mon Sep 26 10:54:02 2022
 @email: swicklund@mines.edu
 """
 
+#==============================================================================
+#                                 LIBRARIES
+#==============================================================================
+
 from cmath import pi
 
 import serial
@@ -18,13 +22,16 @@ import aruco_location as camLoc
 import camera_init
 import threading
 
-startTime = time.time()
-
+#==============================================================================
+#                            FUNCTION DEFINITIONS
+#==============================================================================
+# FIXME add a more descriptive function name. What is the math for?
 def DoMath(currPos, valTime):
     sVal = str(currPos) + " " + str(valTime) + "\n"
     print(sVal)
     valueRet = (int(currPos)/1590 * pi)
     return valueRet
+
 #Function to read serial for LCD
 def ReadfromArduino():
     ser.reset_input_buffer()
@@ -32,7 +39,8 @@ def ReadfromArduino():
     valueTime = int((time.time() - startTime) * 1000)
     mathValue = DoMath(currentPosition, valueTime)
     return mathValue
-        
+
+# send the desired wheel position as determined by aruco marker location to pi
 def SendToArduino(camera):
     try:
         setPoint = camLoc.aruco_location(camera)
@@ -42,6 +50,11 @@ def SendToArduino(camera):
         print("I couldn't send")
     return setPoint
 
+#==============================================================================
+#                                     BODY
+#==============================================================================
+
+startTime = time.time()
 
 #LCD Setup
 lcd_columns = 16
@@ -53,7 +66,7 @@ lcd = character_lcd.Character_LCD_RGB_I2C(i2c, lcd_columns, lcd_rows)
 lcd.clear()
 lcd.color = [0, 100, 0]
 
-#Set address
+#Set address for arduino serial comm
 ser = serial.Serial('/dev/ttyACM0', 115200)
 #Wait for connection to complete
 time.sleep(5)
