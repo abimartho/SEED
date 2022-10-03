@@ -38,33 +38,35 @@ int negEncoderLoop = -3170;
 
 bool fullRotate = true;
 bool simRotate = false;
+bool runMotor = false;
 
 void setup() {
   Serial.begin(115200);
-
+  
   pinMode(RESET_PIN, INPUT);
   md.init();
   attachInterrupt(digitalPinToInterrupt(RESET_PIN), reset, FALLING);
   lastSend = millis();
-  
-  //Slowly ramp up speed of motor to reduce chance of burnout from putting in 400 motor current.
-  if (fullRotate == true){
-    //TARGET_DELAY = 100;
-    for (int i = 1; i <= 100; i++){
-      md.setM1Speed(i);
-      //stopIfFault();
+  if (runMotor == true){
+    //Slowly ramp up speed of motor to reduce chance of burnout from putting in 400 motor current.
+    if (fullRotate == true){
+      //TARGET_DELAY = 100;
+      for (int i = 1; i <= 100; i++){
+        md.setM1Speed(i);
+        //stopIfFault();
+      }
     }
-  }
-  else if (simRotate == true){
-    //TARGET_DELAY = 1;
-    for (int i = 1; i <= 50; i++){
-      md.setM1Speed(i);
+    else if (simRotate == true){
+      //TARGET_DELAY = 1;
+      for (int i = 1; i <= 50; i++){
+        md.setM1Speed(i);
+      }
     }
-  }
-  else{
-    //TARGET_DELAY = 100;
-    for (int i = 1; i <= 400; i++){
-      md.setM1Speed(i);
+    else{
+      //TARGET_DELAY = 100;
+      for (int i = 1; i <= 400; i++){
+        md.setM1Speed(i);
+      }
     }
   }
 }
@@ -80,7 +82,7 @@ void loop() {
   // to get from counts to radians divide counts by 1590 then multiply by 3.14
   // angularPosition = (encoderCounts / 40.0) * 3.14;*/
   if (((millis() - lastSend) > TARGET_DELAY)) {
-    if (newCount >= targetPosition or newCount <= (-1 * targetPosition)){
+    /*if (newCount >= targetPosition or newCount <= (-1 * targetPosition)){
       //encoder.write(0);
       //newCount = encoder.read();
       Serial.println(newCount);
@@ -88,20 +90,20 @@ void loop() {
         md.setM1Speed(i); 
       }
     }
-    else if (simRotate == true and (newCount >= encoderLoop/6 or newCount <= (negEncoderLoop/6))){
+    /*else if (simRotate == true and (newCount >= encoderLoop/6 or newCount <= (negEncoderLoop/6))){
       Serial.println(newCount);
-      /*for(int i = 50; i >= 0; i--){
+      for(int i = 50; i >= 0; i--){
         md.setM1Speed(i); 
-      }*/
-    }
-    else if ((newCount >= encoderLoop or newCount <= (negEncoderLoop))){
+      }
+    }*/
+   /* else if ((newCount >= encoderLoop or newCount <= (negEncoderLoop))){
       encoder.write(0);
       newCount = encoder.read();
       Serial.println(newCount);
-    }
-    else{
+    }*/
+    //else{
       Serial.println(newCount);
-    }
+    //}
     encoderCounts = newCount;
     lastSend = millis();
   }
@@ -114,8 +116,11 @@ void reset() {
 
 void serialEvent() {
   if(Serial.available() > 0) {
-    int targetPositionStr = Serial.read();
-    targetPosition = (targetPositionStr* 1500)/3.14;
+    String targetPositionStr = Serial.readStringUntil("\n");
+    targetPosition = (targetPositionStr.toInt() * 1500)/3.14;
   }
   Serial.flush();
+  if (targetPosition >= 1){
+      runMotor = true;
+    }
 }
