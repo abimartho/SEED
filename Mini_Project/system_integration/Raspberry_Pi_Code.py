@@ -27,7 +27,8 @@ def DoMath(currPos, valTime):
     return valueRet
 #Function to read serial for LCD
 def ReadfromArduino():
-    ser.reset_input_buffer()
+    while (ser.in_waiting() < 28):
+        print("Waiting")
     currentPosition = ser.readline().decode("utf-8").rstrip()
     valueTime = int((time.time() - startTime) * 1000)
     mathValue = DoMath(currentPosition, valueTime)
@@ -36,8 +37,9 @@ def ReadfromArduino():
 def SendToArduino(camera):
     try:
         setPoint = camLoc.aruco_location(camera)
-        sendPoint = setPoint.to_bytes(1, "big")
+        sendPoint = setPoint.to_bytes(28, "big")
         ser.write(sendPoint)
+        ser.flush()
     except:
         print("I couldn't send")
     return setPoint
@@ -63,18 +65,10 @@ camera = camera_init.camera_init()
 setPoint = SendToArduino(camera)
 print("Sleeping 2 seconds to give Arduino time to send something back")
 time.sleep(2)
-
+print("Setpoint is: ", setPoint)
 while True:
     try:
         currPosition = ReadfromArduino()
-        #print("Start of LCD: ",time.time())
-        #This takes so gosh darn long
-        lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
-        #print("End of LCD: ", time.time())
-    except KeyboardInterrupt:
-        print("Closing File")
-        lcd.color = [0, 0, 0]
-        lcd.clear()
-        print("File Closed")
+        #lcd.message = "Set Point: " + str(setPoint) + "\nPosition: " + str(currPosition)
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
