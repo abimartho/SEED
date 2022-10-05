@@ -21,8 +21,9 @@ int encoderCounts = 0;      // Stored value of the encoder
 int targetPosition = 0;     // Desired encoder value. Initially read in as a number 4 or less then converted to encoder counts
 int convtargetPosition = 0; // Target position converted to encoder counts
 int targetSet = 0;          // Saves target position motor is currently going to.
-bool runMotor;     // Enable motor movement
+bool runMotor;              // Enable motor movement
 int newCount = 0;
+bool dataRead = true;
 
 //Controller Code
 double kp = 4.1156;
@@ -38,7 +39,7 @@ double y = 0;
 
 void setup() {
   Serial.begin(115200);
-  bool runMotor = false;
+  runMotor = false;
   pinMode(RESET_PIN, INPUT);
   md.init();
   //attachInterrupt(digitalPinToInterrupt(RESET_PIN), reset, FALLING);
@@ -50,29 +51,30 @@ void loop() {
   newCount = encoder.read();
 
   //Controller Code for Loop
-  double u = 0;
+  int u = 0;
   y = (newCount - encoderCounts)/(millis()-lastSend);
   r = 0.1725;
   e = (r-y);
   I = I + Ts*e;
-  u = kp*e + (ki*I);
+  u = (kp*e + (ki*I))*289.85;
   Ts = millis()-Tc;
   Tc = millis();
   
   //If Motor is enabled to run check to see where its value is into relation of target. If greater than or equal turn off motor.
   if(runMotor == true){
-    if((newCount%3180) >= convtargetPosition){
-        md.setM1Speed(0);
+    if((newCount%3300) >= convtargetPosition){
+        enableMotor(0);
         runMotor = false;
+        dataRead = true;
     }
-    /*else{
-      if (u != 0){
+    else{
+      if (u > 30){
         enableMotor(u);
       }
-    }*/
+    }
   }
   // if newCount goes above encoder count for one full rotation reset to 0
-  if(newCount > 3180){
+  if(newCount >= 3300){
     encoder.write(0);
     newCount = encoder.read();
   }
@@ -99,15 +101,18 @@ void enableMotor(int pwr){
 }
 
 void serialEvent() {
-  if(Serial.available() > 0) {
-    String targetPositionStr = Serial.readStringUntil('\n');
-    targetPosition = targetPositionStr.toInt();
-  }
+  if (dataRead == true){
+    if(Serial.available() > 0) {
+      String targetPositionStr = Serial.readStringUntil('\n');
+      targetPosition = targetPositionStr.toInt();
+    }
   //Only need to run below anytime the serialEvent 
-  if((targetPosition != 0) && (targetSet != targetPosition)) {
-    convtargetPosition = targetPosition * QUARTER_TURN;
-    targetSet = targetPosition;
-    runMotor = true;
-    enableMotor(50);
+    if((targetPosition != 0) && (targetSet != targetPosition)) {
+      convtargetPosition = targetPosition * QUARTER_TURN;
+      targetSet = targetPosition;
+      runMotor = true;
+      dataRead = false;
+      enableMotor(50);
+    }
   }
 }

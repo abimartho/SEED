@@ -33,28 +33,29 @@ lcd.color = [0, 100, 0]
 startTime = time.time()
 
 def DoMath(currPos, valTime):
-    #sVal = str(currPos) + " " + str(valTime) + "\n" Needed for simulation values
-    #print(sVal) Needed for simulation values
-    valueRet = (int(currPos)/1590 * pi)
+    #sVal = str(currPos) + " " + str(valTime) + "\n"
+    #print(sVal)
+    valueRet = ((int(currPos)/1600) * pi)
     return valueRet
 
 #Function to read serial for LCD
 def ReadfromArduino():
+    mathValue = 0
     currentPosition = ser.readline().decode("utf-8").rstrip()
-    valueTime = int((time.time() - startTime) * 1000)
-    mathValue = DoMath(currentPosition, valueTime)
+    if currentPosition != '':
+        valueTime = int((time.time() - startTime) * 1000)
+        mathValue = DoMath(currentPosition, valueTime)
     return mathValue
        
 def SendToArduino(camera):
-    #setPoint = camLoc.aruco_location(camera) Needs to e worked on
-    setPoint = 2
-    if setPoint != prevSetPoint:
-        ser.write(str(setPoint).encode("utf-8"))
-        ser.flush()
-        ser.reset_input_buffer()
-        return setPoint
-    else:
-        return prevSetPoint
+    setPoint = camLoc.aruco_location(camera)
+    #setPoint = 2
+    print(setPoint)
+    ser.write(str(setPoint).encode("utf-8"))
+    ser.flush()
+    ser.reset_input_buffer()
+    return setPoint
+
 
 
 #Set address
@@ -65,13 +66,17 @@ time.sleep(2)
 
 #Setup Camera
 camera = camera_init.camera_init()
-
+i = 0
 while True:
     try:
         prevSetPoint = SendToArduino(camera) #Each loop detect and send new Setpoint
-        while ser.in_waiting < 2:
+        while ser.in_waiting <= 3:
             pass
         currePosition = ReadfromArduino()
-        lcd.message = "Set Point: " + str(prevSetPoint) + "\nPosition: " + str(currePosition)
+        if i == 10:
+            lcd.message = "Set Point: " + str(prevSetPoint) + "\nPosition: " + str(currePosition)
+            i = 0
+        i = i + 1
     except IOError:
         lcd.message = "Oops! IOError, check Pi to Arduino USB Connections"
+
