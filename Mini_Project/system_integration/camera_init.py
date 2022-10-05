@@ -11,7 +11,7 @@ def camera_init():
     # init camera object
     camera = PiCamera()
     # wait to let white balance settle
-    time.sleep(2)
+    time.sleep(3)
     # query current white balance value and set that as constant
     gains = camera.awb_gains
     camera.awb_mode = 'off'

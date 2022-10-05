@@ -36,7 +36,6 @@ def aruco_location(camera):
         x = int(x/4)
         y = int(y/4)
     except:
-        print('exception')
         return 0
     # determine marker quadrant
     width = image.shape[1]
