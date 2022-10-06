@@ -2,7 +2,7 @@
 ## Project Overview
 This project controls the position of a wheel using a motor, arduino and rasperry pi. The position of the motor is determined by the location of an aruco marker in the camera image. Based on this location, a contol system that rejects disturbances is used to spin the wheel at a regulated speed to that location.
 ## Subsystem Documentation links
-[Marker Detection Scheme](https://github.com/abimartho/SEED/blob/main/Mini_Project/cv/cv_readme.txt)
+[Marker Detection Scheme](https://github.com/abimartho/SEED/blob/main/Mini_Project/cv/cv_readme.txt)  
 [Model Development](https://github.com/abimartho/SEED/blob/main/Mini_Project/SEED_2_Paper.doc)
 ## Project Board
 | Task | Team Member | Completed? |
