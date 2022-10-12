@@ -1,7 +1,7 @@
 '''
 Abi Thompson
 9-23-22
-Function: aruco_location
+Function: aruco_quadrant
 Input: camera object
 Output: int quadrant of image that marker is detected in [0,4], 0 for no marker
         *=====*=====*
@@ -13,19 +13,15 @@ Output: int quadrant of image that marker is detected in [0,4], 0 for no marker
 
 import numpy as np
 from picamera import PiCamera
-from picamera.array import PiRGBArray
+import cv_helpers as chs
 import cv2
 
-def aruco_location(camera):
-    # capture image and convert to grayscale
-    rawCapture = PiRGBArray(camera)
-    camera.capture(rawCapture, format='bgr')
-    image = rawCapture.array
-    grayscale_img = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+def aruco_quadrant(camera):
+    image = chs.cap_and_convert(camera)
     # load aruco dict
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
     # identify aruco marker
-    corners, ids, temp = cv2.aruco.detectMarkers(grayscale_img, aruco_dict)
+    corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
     # compute aruco center
     try:
         x = 0
