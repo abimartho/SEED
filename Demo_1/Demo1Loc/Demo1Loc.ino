@@ -1,4 +1,4 @@
-#include <Encoder.h>
+#include "Encoder.h"
 #include "test2.h"
 #include "test3.h"
 
@@ -10,12 +10,19 @@
 Encoder leftWheel(LEFT_PIN_A, LEFT_PIN_B);
 Encoder rightWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 
+typedef enum {TEST2, TEST3} TEST;
+TEST currentTest = TEST2;
+
+
 void setup() {
-  // put your setup code here, to run once:
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  switch(currentTest){
+    case TEST2:
+      break;
+    case TEST3:
+      break;
+  }
 }
