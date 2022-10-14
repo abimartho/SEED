@@ -7,7 +7,8 @@ import aruco_quadrant, aruco_location, time
 import cv_helpers as chs
 
 def cv_testbench():
-    camera = chs.camera_init()
+    #camera = chs.camera_init()
+    camera = None
     dimension = 5 #cm
     while True:
         aruco_location.aruco_location(camera, dimension)
