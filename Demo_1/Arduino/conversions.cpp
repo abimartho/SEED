@@ -1,10 +1,6 @@
 // Test 2: Move forward in a straight line and stop after a specified distance in feet (between 1 and 10 feet).
-
-#include "Encoder.h"
-#include "test2.h"
-
-// Define the distance from the center to a wheel
-#define R 8
+// Test3: Rotate a specified number of radians then move forward a certain distance
+#include "conversions.h"
 
 int inchesToCounts(int inches) {
   return inches * 173.33;

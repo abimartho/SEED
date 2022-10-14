@@ -10,11 +10,14 @@ Encoder leftWheel(LEFT_PIN_A, LEFT_PIN_B);
 Encoder rightWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 
 typedef enum {TEST2, TEST3} TEST;
+// Use to change which test is currently being performed
 TEST currentTest = TEST2;
+
 // Target distance in inches
 int distanceTarget;
 // Target rotation in radians
 double rotationTarget;
+// Targer postions to be used by the motor controllers
 int motor1Counts = 0;
 int motor2Coutns = 0;
 
