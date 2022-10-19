@@ -1,5 +1,7 @@
-#include "Encoder.h"
+#include <Encoder.h>
+#include <DualMC33926MotorShield.h>
 #include "conversions.h"
+#include "control.h"
 
 #define LEFT_PIN_A  2
 #define RIGHT_PIN_A 3
@@ -8,6 +10,9 @@
 
 Encoder leftWheel(LEFT_PIN_A, LEFT_PIN_B);
 Encoder rightWheel(RIGHT_PIN_A, RIGHT_PIN_B);
+
+DualMC33926MotorShield rightMotor;
+DualMC33926MotorShield leftMotor;
 
 typedef enum {TEST2, TEST3} TEST;
 // Use to change which test is currently being performed
@@ -23,8 +28,8 @@ int motor2Coutns = 0;
 
 void setup() {
 // Change the assigned values to change the distances covered by the robot
-distnaceTarget = 0;
-rotationTarget = 0;
+  distnaceTarget = 0;
+  rotationTarget = 0;
 }
 
 void loop() {
