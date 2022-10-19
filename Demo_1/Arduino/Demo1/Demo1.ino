@@ -11,8 +11,7 @@
 Encoder leftWheel(LEFT_PIN_A, LEFT_PIN_B);
 Encoder rightWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 
-DualMC33926MotorShield rightMotor;
-DualMC33926MotorShield leftMotor;
+DualMC33926MotorShield md;
 
 typedef enum {TEST2, TEST3} TEST;
 // Use to change which test is currently being performed
@@ -31,7 +30,7 @@ int leftError = 0;
 
 void setup() {
 // Change the assigned values to change the distances covered by the robot
-  distnaceTarget = 0;
+  distanceTarget = 12;
   rotationTarget = 0;
 }
 
@@ -39,26 +38,25 @@ void loop() {
   switch(currentTest){
     case TEST2:
       rightMotorCounts = inchesToCounts(distanceTarget);
-      leftMotorCounts = rightMotorCounts
+      leftMotorCounts = rightMotorCounts;
+      rightError = rightMotorCounts - rightWheel.read();
+      leftError = leftMotorCounts - leftWheel.read();
       // TODO: add code to run the rightMotorCounts
-      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
-      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
+      md.setM1Speed(mtrValue(rightError));
+      md.setM2Speed(mtrValue(leftError));
       break;
+      
     case TEST3:
       // Rotate robot
       rightMotorCounts = radsToCounts(rotationTarget);
       // Assuming the motors behave identically
-      leftMotorCounts = rightMotorCounts * -1
+      leftMotorCounts = rightMotorCounts * -1;
       // TODO: Run motor to rotate robot
-      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
-      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
-
+      
       // Move forward
       rightMotorCounts = inchesToCounts(distanceTarget);
       leftMotorCounts = rightMotorCounts;
       // TODO: Run motor to reach target distance
-      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
-      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
       break;
   }
 }

@@ -7,7 +7,7 @@ int inchesToCounts(int inches) {
 }
 
 int feetToCounts(double feet) {
-  return 2080 * feet
+  return 2080 * feet;
 }
 
 int radsToCounts(double rads) {
