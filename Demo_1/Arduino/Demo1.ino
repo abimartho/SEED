@@ -23,8 +23,11 @@ int distanceTarget;
 // Target rotation in radians
 double rotationTarget;
 // Targer postions to be used by the motor controllers
-int motor1Counts = 0;
-int motor2Coutns = 0;
+int rightMotorCounts = 0;
+int leftMotorCounts = 0;
+// distance from target to be passed to motor controllers
+int rightError = 0;
+int leftError = 0;
 
 void setup() {
 // Change the assigned values to change the distances covered by the robot
@@ -35,19 +38,27 @@ void setup() {
 void loop() {
   switch(currentTest){
     case TEST2:
-      motor1Counts = inchesToCounts(distanceTarget);
-      motor2Counts = motor1Counts
-      // TODO: add code to run the motor1Counts
-
+      rightMotorCounts = inchesToCounts(distanceTarget);
+      leftMotorCounts = rightMotorCounts
+      // TODO: add code to run the rightMotorCounts
+      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
+      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
       break;
     case TEST3:
-      motor1Counts = radsToCounts(rotationTarget);
+      // Rotate robot
+      rightMotorCounts = radsToCounts(rotationTarget);
       // Assuming the motors behave identically
-      motor2Counts = motor1Counts * -1
-      // TODO: Run motor to
-      motor1Counts = inchesToCounts(distanceTarget);
-      motor2Counts = motor1Counts;
+      leftMotorCounts = rightMotorCounts * -1
+      // TODO: Run motor to rotate robot
+      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
+      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
+
+      // Move forward
+      rightMotorCounts = inchesToCounts(distanceTarget);
+      leftMotorCounts = rightMotorCounts;
       // TODO: Run motor to reach target distance
+      rightMotor.setM1Speed(mtrValue(rightMotorCounts - rightMotor.read()));
+      leftMotor.setM1Speed(mtrValue(leftMotorCounts - leftMotor.read()));
       break;
   }
 }
