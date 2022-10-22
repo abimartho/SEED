@@ -12,8 +12,10 @@ Encoder myEnc(ENC_A, ENC_B);
 Encoder myEnc2(ENC_C,ENC_D);
 DualMC33926MotorShield md;
 
+double scale = 0.0;
+
 int cir=PI*5.875;//change 5
-double distance=100;//Put in inches if you are measuring wheel radius in inch
+double distance=150;//Put in inches if you are measuring wheel radius in inch
 
 double angleWant=2*PI*(distance)/cir; //double check my math on this
 //double angleWant=2*3.14; //1 rotation for testing
@@ -32,7 +34,6 @@ float mtrCtrlOut;
 //variables for the second encoder
 double angleNow2=0;
 double error2=0;
-double catchup=8;//this number will need to change
 double mtrCtrlVolt2;
 float mtrCtrlOut2;
 double kp2=8;
@@ -42,15 +43,14 @@ void setup() {
   //Serial.begin(115200);
   //Serial.println("Dual MC33926 Motor Shield");
   md.init();
-  pinMode(RESET_PIN, INPUT); //do i need this?
 }
 
 void loop() {
   // I need to implement this to run every 10 ms(Time1)
   if(millis() >= sampTime + nowTime);{
     nowTime+=sampTime;
-  angleNow=(myEnc.read())*(PI/1590);//gets angle in radians
-  angleNow2=(myEnc2.read())*(PI/1590);
+  angleNow=(myEnc.read())*(PI/1600);//gets angle in radians
+  angleNow2=(myEnc2.read())*(PI/1600);
   //Serial.println("1");
   //Serial.println(myEnc.read());
   //Serial.println("2");
@@ -65,33 +65,38 @@ void loop() {
    // Serial.println(error);
     Serial.println("Error 2");
     //Serial.println(error2);
-    if(error<.1){  //If we need PI implement, else redundant code
-      //integral=integral+(error*nowTime)/100;
-      }else{
-        integral=0;
-        }
       
       //don't need kd
-      //kp and ki figure out through trial and error speed=kp jitters=ji
+      //kp and ki figure out through trial and error speed=kp jitters=ki
     mtrCtrlVolt=kp*error+ki*integral; //this is in volts
+   
     mtrCtrlVolt2=kp2*error2+mtrCtrlVolt; //We will need to tweek kp2 so that the motors line up
+   
+   
+    mtrCtrlOut=(mtrCtrlVolt/8.0)*400; //300 was 400
+    mtrCtrlOut2=(mtrCtrlVolt2/8.0)*400;
     
-    mtrCtrlOut=(mtrCtrlVolt/7.5)*300; //300 was 400
-    mtrCtrlOut2=(mtrCtrlVolt2/7.5)*300;
-    
-    if (mtrCtrlOut<-300){ //max is 400 put to 300 to try and reduce slip
-    mtrCtrlOut=-300;
+    if (mtrCtrlOut<-400){ //max is 400 put to 300 to try and reduce slip
+      scale = -400 / mtrCtrlOut;
+      mtrCtrlOut = -400;
+      mtrCtrlOut2 = scale * mtrCtrlOut2;
     }
-    if (mtrCtrlOut>300){
-      mtrCtrlOut=300;
+    if (mtrCtrlOut>400){
+      scale = 400 / mtrCtrlOut;
+      mtrCtrlOut = 400;
+      mtrCtrlOut2 = scale * mtrCtrlOut2;
     }
-    if (mtrCtrlOut2<-300){ 
-      mtrCtrlOut=-300;
+    if (mtrCtrlOut2 < -400) {
+      scale = -400 / mtrCtrlOut2;
+      mtrCtrlOut2 = -400;
+      mtrCtrlOut = scale * mtrCtrlOut;
     }
-    if (mtrCtrlOut2>300){
-      mtrCtrlOut=300;
+    if (mtrCtrlOut2 > 400) {
+      scale = 400 / mtrCtrlOut2;
+      mtrCtrlOut2 = 400;
+      mtrCtrlOut = scale * mtrCtrlOut;
     }
-    
+   // mtrCtrlOut2 = mtrCtrlOut;
   }
   md.setSpeeds(mtrCtrlOut,-1*mtrCtrlOut2);
  // md.setM2Speed(mtrCtrlOut2); //this was individual 

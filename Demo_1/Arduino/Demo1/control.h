@@ -1,6 +1,14 @@
-#define CONTROL_SAMPLE_TIME 10
+#include <Encoder.h>
+#include <DualMC33926MotorShield.h>
 
-const double KP = 4.1156;
-const double KI = 0.37071;
+const double kp = 8;
+const double kp2 = 8;
+const double ki = 0;
 
-int mtrValue(double error);
+// Inputs: error between the master wheel and the target possition, error between the maser and slave wheel, pointer to mtrVal array
+// Output: updates value in mtrVal array
+void drive(double targetError, double wheelError, int mtrVal[2]);
+
+// Inputs: 
+// Output: Updates values in mtrVal array
+void turn(double target);
