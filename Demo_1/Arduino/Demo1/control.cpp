@@ -9,9 +9,7 @@ void drive(double targetError, double wheelError, int mtrVal[2]) {
   double mtrCtrlVolt2 = 0;
   
   mtrCtrlVolt = kp * targetError;
-  Serial.println(mtrCtrlVolt);
   mtrCtrlVolt2 = kp2 * wheelError + mtrCtrlVolt;
-  Serial.println(mtrCtrlVolt2);
 
   mtrCtrlOut=(mtrCtrlVolt/8.0)*400; 
   mtrCtrlOut2=(mtrCtrlVolt2/8.0)*400;
@@ -36,8 +34,36 @@ void drive(double targetError, double wheelError, int mtrVal[2]) {
     mtrCtrlOut2 = 400;
     mtrCtrlOut = scale * mtrCtrlOut;
   }
-  Serial.println(mtrCtrlOut);
   mtrVal[0] = mtrCtrlOut;
-  Serial.println(mtrCtrlOut2);
   mtrVal[1] = -1 * mtrCtrlOut2;
+}
+
+void turn (double error, double error2, int mtrVal[2]) {
+  double mtrCtrlOut = 0;
+  double mtrCtrlOut2 = 0;
+  double mtrCtrlVolt = 0;
+  double mtrCtrlVolt2 = 0;
+  
+  mtrCtrlVolt=kp*error; //this is in volts
+  mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2); //We will need to tweek kp2 so that the motors line up
+    
+    
+  mtrCtrlOut=((mtrCtrlVolt/7.5)*50); //300 was 400
+  mtrCtrlOut2=(mtrCtrlVolt2/7.5)*50;
+    
+  if (mtrCtrlOut<-delta){ 
+  mtrCtrlOut=-delta;
+  }
+  if (mtrCtrlOut>delta){
+    mtrCtrlOut=delta;
+  }
+  if (mtrCtrlOut2<-delta){ 
+    mtrCtrlOut2=-delta;
+  }
+  if (mtrCtrlOut2>delta){
+    mtrCtrlOut2=delta;
+  }
+
+  mtrVal[0] = (mtrCtrlOut + mtrCtrlOut2) / 2;
+  mtrVal[1] = (mtrCtrlOut + mtrCtrlOut2) / 2;
 }
