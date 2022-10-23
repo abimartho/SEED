@@ -1,12 +1,11 @@
 import board
-import time
-import adafruit_character_lcd.character_lcd_i2c as character_lcd
+import adafruit_character_lcd.character_lcd_rgb_i2c as character_lcd
 
-cols = 16
-rows = 2
+lcd_cols = 16
+lcd_rows = 2
 
-i2c = board.I2C()
-lcd = character_lcd.Character_LCD_I2C(i2c, cols, rows)
+i2c = board.I2C() # uses board.SCL and board.SDA
+lcd = character_lcd.Character_LCD_RGB_I2C(i2c, lcd_cols, lcd_rows)
 
 def initializeLCD():
     lcd.clear()
@@ -19,3 +18,4 @@ def writeLCD(sentMessage):
 def lcdOff():
     lcd.color = [0,0,0]
     lcd.clear()
+
