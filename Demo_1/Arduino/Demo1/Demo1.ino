@@ -16,9 +16,9 @@ Encoder slaveWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 
 DualMC33926MotorShield md;
 
-typedef enum {TEST2, TEST3SPIN, TEST3GO} TEST;
+typedef enum {TEST2, TEST3SPIN,Test3wait, TEST3GO} TEST;
 // Use to change which test is currently being performed
-TEST currentTest = TEST3SPIN;
+TEST currentTest = TEST2; //TEST2//TEST3SPIN
 int lastTime = 0;
 
 // Target values
@@ -26,7 +26,7 @@ int distanceTarget;
 int targetMotorCounts;
 double rotationTarget;
 
-double theta = (3.05)*0.5*PI;
+double theta = 2*0.5*PI;
 double thetaNow = 0.0;
 
 // Encoder counts
@@ -48,9 +48,9 @@ void setup() {
 // Change the assigned values to change the distances covered by the robot
   distanceTarget = 12;
   distanceTarget = feetToCounts(distanceTarget);
-  rotationTarget = PI;
+  rotationTarget = 3*PI*(.5);//leave 3 remove if needed
   md.init();
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -60,12 +60,13 @@ void loop() {
   wheelError = currentCountsMaster - currentCountsSlave;
   distanceError = distanceTarget - currentCountsMaster;
   angleError = currentCountsMaster - abs(currentCountsSlave);
-  thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
+  
   
   
   // Convert Errors to radians
   distanceError = distanceError * (PI / 1600);
   wheelError = wheelError * (PI / 1600);
+  angleError=angleError*(PI/1600);//added
   
   switch(currentTest){
     case TEST2:
@@ -81,24 +82,33 @@ void loop() {
       if (theta<0){
         dir=-1;
       }
+      thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
-        lastTime = millis();
+        lastTime = millis();  
         turn(dir, distanceError, angleError, mtrVal);
-        md.setSpeeds(mtrVal[0], mtrVal[1]);
-      }
-      // TODO: transition to go state, reset encoders to 0
+        //md.setSpeeds(mtrVal[0], mtrVal[1]);
       thetaError = abs(theta) - thetaNow;
-      
-
-      
       if (thetaError <= 0) {
         masterWheel.write(0);
         slaveWheel.write(0);
-        currentTest = TEST3GO;
+        currentTest = Test3wait;
+      }else{
+        md.setSpeeds(mtrVal[0],mtrVal[1]);
       }
+      
+      }
+      // TODO: transition to go state, reset encoders to 0
+      
       break;
-
+      
+    case Test3wait:
+    md.setSpeeds(0,0);
+    delay(1000);
+    currentTest=TEST2;
+    break;
     case TEST3GO:
+    masterWheel.write(0);
+    slaveWheel.write(0);
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
