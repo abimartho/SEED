@@ -4,7 +4,8 @@ import aruco_location as compVis
 import cv_helpers as camInst
 import time
 
-lcd = LCD.initializeLCD()
+
+LCD.initializeLCD()
 #Aruco Marker Code
 camera = camInst.camera_init()
 
@@ -14,7 +15,7 @@ dimension = 5
 #Loop below angle call with slight delay
 while True:
     angle = compVis.aruco_location(camera, dimension)
-    writeLCD(str(angle))
-    delay(2)
+    LCD.writeLCD(str(angle))
+    time.sleep(2)
 
 #lcdOff()
