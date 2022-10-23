@@ -38,11 +38,18 @@ void drive(double targetError, double wheelError, int mtrVal[2]) {
   mtrVal[1] = -1 * mtrCtrlOut2;
 }
 
-void turn (double error, double error2, int mtrVal[2]) {
+void turn (int dir, double error, double error2, int mtrVal[2]) {
   double mtrCtrlOut = 0;
   double mtrCtrlOut2 = 0;
   double mtrCtrlVolt = 0;
   double mtrCtrlVolt2 = 0;
+  double spinOther=0;
+
+  if (dir=1){
+    spinOther=1;
+  }else{
+    spinOther=(-1);
+  }
   
   mtrCtrlVolt=kp*error; //this is in volts
   mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2); //We will need to tweek kp2 so that the motors line up
@@ -64,6 +71,6 @@ void turn (double error, double error2, int mtrVal[2]) {
     mtrCtrlOut2=delta;
   }
 
-  mtrVal[0] = (mtrCtrlOut + mtrCtrlOut2) / 2;
-  mtrVal[1] = (mtrCtrlOut + mtrCtrlOut2) / 2;
+  mtrVal[0] = spinOther*(mtrCtrlOut + mtrCtrlOut2) / 2;
+  mtrVal[1] = spinOther*(mtrCtrlOut + mtrCtrlOut2) / 2;
 }

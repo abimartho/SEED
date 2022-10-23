@@ -39,6 +39,8 @@ double wheelError = 0.0;
 double angleError = 0.0;
 double thetaError = 0.0;
 
+int dir=1;
+
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
 int mtrVal[2] = {0, 0};
 
@@ -76,13 +78,19 @@ void loop() {
       
     case TEST3SPIN:
       // TODO: Run motor to reach target angle
+      if (theta<0){
+        dir=-1;
+      }
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();
-        turn(distanceError, angleError, mtrVal);
+        turn(dir, distanceError, angleError, mtrVal);
         md.setSpeeds(mtrVal[0], mtrVal[1]);
       }
       // TODO: transition to go state, reset encoders to 0
-      thetaError = theta - thetaNow;
+      thetaError = abs(theta) - thetaNow;
+      
+
+      
       if (thetaError <= 0) {
         masterWheel.write(0);
         slaveWheel.write(0);
