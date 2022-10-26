@@ -3,7 +3,6 @@
 
 #define ENC_A 2
 #define ENC_B 5
-#define RESET_PIN 3 //I beleive unessisary
 
 #define ENC_C 3 //are these numbers good
 #define ENC_D 6
@@ -18,7 +17,6 @@ int cir=PI*5.875;//change 5
 double distance=150;//Put in inches if you are measuring wheel radius in inch
 
 double angleWant=2*PI*(distance)/cir; //double check my math on this
-//double angleWant=2*3.14; //1 rotation for testing
 
 //variables for first encoder
 double angleNow=0;
@@ -49,22 +47,11 @@ void loop() {
   // I need to implement this to run every 10 ms(Time1)
   if(millis() >= sampTime + nowTime);{
     nowTime+=sampTime;
-  angleNow=(myEnc.read())*(PI/1600);//gets angle in radians
-  angleNow2=(myEnc2.read())*(PI/1600);
-  //Serial.println("1");
-  //Serial.println(myEnc.read());
-  //Serial.println("2");
-  //Serial.println(myEnc2.read());
-   // Serial.println("Motor 1"); //do I want print or println
-   // Serial.println(angleNow);
-    //Serial.println("Motor 2");
-    //Serial.println(angleNow2);
-    error=angleWant-angleNow;
+    angleNow=(myEnc.read())*(PI/1600);//gets angle in radians
+    angleNow2=(myEnc2.read())*(PI/1600);
+    error = angleWant - angleNow;
     error2=angleNow-angleNow2;
-    Serial.println("Error 1");
-   // Serial.println(error);
-    Serial.println("Error 2");
-    //Serial.println(error2);
+
       
       //don't need kd
       //kp and ki figure out through trial and error speed=kp jitters=ki
@@ -96,10 +83,8 @@ void loop() {
       mtrCtrlOut2 = 400;
       mtrCtrlOut = scale * mtrCtrlOut;
     }
-   // mtrCtrlOut2 = mtrCtrlOut;
   }
   md.setSpeeds(mtrCtrlOut,-1*mtrCtrlOut2);
- // md.setM2Speed(mtrCtrlOut2); //this was individual 
 }
 
 //if motor isn't moving jack up kp until it does.
