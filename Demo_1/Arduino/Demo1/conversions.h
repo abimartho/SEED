@@ -4,5 +4,5 @@
 // Define the distance from the center to a wheel in inches
 #define R 5.5
 int inchesToCounts(int inches);
-int feetToCounts(double feet);
+double feetToCounts(double feet);
 int radsToCounts(double rads);

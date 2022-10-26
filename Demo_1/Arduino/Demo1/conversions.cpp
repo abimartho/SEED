@@ -6,7 +6,7 @@ int inchesToCounts(int inches) {
   return inches * 173.33;
 }
 
-int feetToCounts(double feet) {
+double feetToCounts(double feet) {
   return 2080 * feet;
 }
 

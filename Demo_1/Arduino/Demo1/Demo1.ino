@@ -22,11 +22,11 @@ TEST currentTest = TEST2; //TEST2//TEST3SPIN
 int lastTime = 0;
 
 // Target values
-int distanceTarget;
+double distanceTarget;
 int targetMotorCounts;
 double rotationTarget;
 
-double theta = 2*0.5*PI;
+double theta = 2*1*PI;
 double thetaNow = 0.0;
 
 // Encoder counts
@@ -46,9 +46,9 @@ int mtrVal[2] = {0, 0};
 
 void setup() {
 // Change the assigned values to change the distances covered by the robot
-  distanceTarget = 12;
+  distanceTarget = 7;
   distanceTarget = feetToCounts(distanceTarget);
-  rotationTarget = 3*PI*(.5);//leave 3 remove if needed
+  rotationTarget = 3*PI*(1);//leave 3 remove if needed
   md.init();
   Serial.begin(115200);
 }
