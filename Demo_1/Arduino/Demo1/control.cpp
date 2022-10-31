@@ -45,10 +45,10 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   double mtrCtrlVolt2 = 0;
   double spinOther=0;
 
-  if (dir=1){
-    spinOther=(1);
-  }else{
+  if (dir=-1){
     spinOther=(-1);
+  }else{
+    spinOther=(1);
   }
   
   mtrCtrlVolt=kp*error; //this is in volts
