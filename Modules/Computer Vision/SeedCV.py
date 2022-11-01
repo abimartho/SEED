@@ -133,7 +133,7 @@ class SeedCV:
     '''
     Function: aruco_location
     Input: N/A
-    Output: Angle from vertical of the marker in radians
+    Output: Angle from vertical of the marker in radians, distance of marker from camera in ft
             Returns None if no markers detected in image
     '''
     def aruco_location(self):
@@ -155,13 +155,17 @@ class SeedCV:
             half_width_cm = width_cm / 2
             d = half_width_cm / math.tan(fov_x)
 
+            # convert cm to ft for the return value
+            cm_per_ft = 30.48
+            d_ft = d / cm_per_ft
+
             # use this distance and marker center to find angle from cam
             center = self.center(corners)
             ca = int(center[0])
             h_pix = ca - cx
             h_cm = width_cm * h_pix / width_pix
             theta = math.atan( h_cm / d )
-            return theta
+            return theta, d_ft
         except:
             # no markers detected
             return None
