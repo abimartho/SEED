@@ -31,7 +31,7 @@ class SeedCV:
     Inputs: N/A
     Outputs: PiCamera Object
     '''
-    def camera_init():
+    def camera_init(self):
         # init camera object
         camera = PiCamera()
         # wait to let white balance settle
@@ -62,7 +62,7 @@ class SeedCV:
     Inputs: 2 two-dimensional points, p1 and p2
     Outputs: Distance between the two points as a float
     '''
-    def distance(p1, p2):
+    def distance(self, p1, p2):
         t0 = (p1[0] - p2[0])**2
         t1 = (p1[1] - p2[1])**2
         return math.sqrt(t0+t1)
@@ -73,7 +73,7 @@ class SeedCV:
     Inputs: The corners aray as computed by detect markers
     Outputs: The center of the first marker in the list as coordinates (x, y)
     '''
-    def center(corners):
+    def center(self, corners):
         # compute aruco center
         try:
             x = 0
@@ -99,7 +99,7 @@ class SeedCV:
             *=====*=====*
     '''
     def aruco_quadrant(self):
-        image = self.cap_and_convert(self.camera)
+        image = self.cap_and_convert()
         # load aruco dict
         aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
         # identify aruco marker
@@ -138,7 +138,7 @@ class SeedCV:
     '''
     def aruco_location(self):
         # capture image and detect aruco marker
-        image = self.cap_and_convert(self.camera)
+        image = self.cap_and_convert()
         #image = cv2.imread('test_images/img3.jpg') 
         aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
         corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
