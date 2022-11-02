@@ -15,23 +15,8 @@ To use:
     example: cv = SeedCV.SeedCV()
 3. Call functions from the class object as needed
     example: angle, distance = cv.aruco_location()
-Details on the public class methods are included in the next section
-
-The function aruco_quadrant() can be ran repeatedly. It takes the parameter of
-the camera object and returns an integer [0,4] corresponding to the quadrant of 
-the image that a 6x6 aruco marker is detected in. The integers corresponding to
-each quadrant are:
-    0: no marker in image
-    *=====*=====*
-    |  2  |  1  |
-    *=====*=====*
-    |  3  |  4  |
-    *=====*=====*
-An example of use is:
-    quad = aruco_location(camera)
-    
+Details on the public class methods are included in the next section 
 --------------------------------------------------------------------------------
-
 SeedCV.aruco_quadrant()
     params: none
     returns: integer corresponding to image quadrant
