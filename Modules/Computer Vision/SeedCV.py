@@ -168,4 +168,4 @@ class SeedCV:
             return theta, d_ft
         except:
             # no markers detected
-            return None
+            return None, None
