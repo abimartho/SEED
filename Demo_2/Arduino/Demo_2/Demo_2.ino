@@ -44,6 +44,7 @@ int currentCountsSlave = 0;
 
 // Error values
 double distanceError = 0.0;
+double rotationError = 0.0;
 double wheelError = 0.0;
 double angleError = 0.0;
 double thetaError = 0.0;
@@ -72,6 +73,7 @@ void loop() {
   currentCountsSlave = slaveWheel.read();
   wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
   distanceError = distanceTarget - currentCountsMaster;
+  rotationError = angleTarget - currentCountsMaster;
   angleError = currentCountsMaster - currentCountsSlave;//got rid of abs I think this might have messed it up.
   
   
@@ -100,7 +102,7 @@ void loop() {
       thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
-        turn(dir, distanceError, angleError, mtrVal);
+        turn(dir, rotationError, angleError, mtrVal);
         //md.setSpeeds(mtrVal[0], mtrVal[1]);
       
       thetaError = abs(theta) - abs(thetaNow);
@@ -147,8 +149,8 @@ void loop() {
         masterWheel.write(0);
         slaveWheel.write(0);
         delay(1000);
-        targetAngle = angleReceived
-        targetDistance = distanceReceived
+        targetAngle = radsToCounts(angleReceived);
+        targetDistance = feetToCounts(distanceReceived);
       }
     break;
     }  
