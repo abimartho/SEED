@@ -2,6 +2,8 @@
 #include <DualMC33926MotorShield.h>
 #include "conversions.h"
 #include "control.h"
+#include <Wire.h>
+
 
 #define LEFT_PIN_A  2
 #define RIGHT_PIN_A 3
@@ -20,6 +22,13 @@ typedef enum {SEARCH, WAIT, TURN, DRIVE} MODE;
 // Use to change which test is currently being performed
 MODE currentMode = SEARCH; 
 int lastTime = 0;
+
+#define SLAVE_ADDRESS 0x04
+int number = 0;
+int state = 0;
+int data[8];
+int readReg = 4;
+int readStatus = 0;
 
 // Target values
 double distanceTarget = 0.0;
@@ -41,16 +50,20 @@ double thetaError = 0.0;
 
 int dir=-1;
 int testX=0;
-
+int stopCMD = 0;
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
 int mtrVal[2] = {0, 0};
 
 void setup() {
+  pinMode(13, OUTPUT);
   // Change the assigned values to change the distances covered by the robot
   // distanceTarget = 1;
   // distanceTarget = feetToCounts(distanceTarget);
   md.init();
   Serial.begin(115200);
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(receiveData);
+  Wire.onRequest(sendData);
 }
 
 void loop() {
@@ -125,18 +138,70 @@ void loop() {
     */
     case SEARCH:
       delay(100);
-      if(testX<50){ //this just needs to be the intterupt
+      if(stopCMD != 1){ //this just needs to be the intterupt
         md.setSpeeds(150,150);
-        testX++;
+        //testX++;
       }else{
         md.setSpeeds(0,0);
         currentMode = TURN;
         masterWheel.write(0);
         slaveWheel.write(0);
         delay(1000);
-        // targetAngle = angleReceived
-        // targetDistance = distanceReceived
+        targetAngle = angleReceived
+        targetDistance = distanceReceived
       }
     break;
     }  
+}
+
+void receiveData(int byteCount){
+  int i=0;
+  while( Wire.available()) {
+    data[i] = Wire.read();
+    Serial.print(data[i]);
+    Serial.print(' ');
+    i++;
+  }
+  i--;
+  //Arduino recieved angle stop motors and angle and distance
+  if (data[0] == 0) {
+    state = 0;
+    //readStatus = 0;
+    stopCMD = 1;
+    angleReceived = data[1]/1000;
+    distanceReceived = data[2]/10;
+  }
+  //Arduino has recieved Angle
+  /*else if (data[0] == 1) {
+    state = 1;
+    angleReceived = data[1]/1000;
+    readStatus = 1;
+  }
+  //Arduino has recieved Distance
+  else if (data[0] == 2){
+    state = 2;
+    distanceReceived = data[1]/10;
+    readStatus = 2;
+  }*/
+  //Read Request
+  else if (data[0] == 4){
+    state = 4;
+  }
+}
+
+// callback for sending data
+void sendData(){
+  if (state == 4){
+    Wire.write(readStatus);
+  }
+  /*else if (state == 0) {
+    //Use to indicate that Arduino has stopped and wants Angle
+    Wire.write(0);
+  }
+  else if(state == 1){
+    Wire.write(1); //Indicate Arduino is Lined up With Angle
+  }
+  else if(state == 2){
+    Wire.write(2);  //Indiacte Arduino is at Marker
+  }*/
 }

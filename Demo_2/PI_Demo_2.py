@@ -10,13 +10,14 @@ import SeedCV
 
 #Write number entered to specific register
 def writeNumber(value, offReg):
-    bus.write_byte_data(address, offReg, value)
+    bus.write_block_data(address, offReg, value)
     return -1
 
 #Read number entered to Arduino off of previous register
 def readNumber(offReg):
     number = bus.read_byte_data(address,offReg)
     return number
+
 def stateStart():
     val = input("Begin Clyde (y/n): ")
     if val == 'y' or val == 'Y':
@@ -32,8 +33,10 @@ def stateCam():
         angle, distance = cv.aruco_location()
         print(angle)
     if angle != None:
+        angle = int(angle*1000)
+        distance = int(distance*10)
         print("Switching State")
-        writeNumber(1,0)
+        writeNumber([angle,distance],0)
         return stateWait()
     else:
         return stateCam()
@@ -41,12 +44,13 @@ def stateCam():
 def stateWait():
     status = readNumber(4)
     if status == 0:
-        print("Pi Stopped")
-        return stateAngle()
-    elif status == 1:
-        return stateDistance()
+        print("Pi Waiting") #Need to change so he only waits for state done
+        return stateWait()
+    #elif status == 1:
+        #return stateDistance()
     elif status == 2:
         return stateDone()
+    time.sleep(.5)
     #readNumber(0) Wait for Arduino to Respond with 0 to indicate stopped
     #readNumber(0) Wait for Arduino to Repond with 1 to indicate lined up
     #readNumber(0) Arduino at Correct Spot with 2 to indicate finished
