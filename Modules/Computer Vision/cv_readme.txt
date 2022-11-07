@@ -1,43 +1,45 @@
 ================================================================================
                    Marker Detection Scheme Documentation
 --------------------------------------------------------------------------------
-                     EENG 350 | 9-26-22 | Abi Thompson
+                     EENG 350 | 10-2-22 | Abi Thompson
 ================================================================================
 
-The marker detection scheme is composed of two primary functions:
-+ camera_init()
-+ aruco_quadrant()
-There is also a testbench function used to test the operation of the function
-but that is not used in the operation of the full project.
-
+The marker detection scheme is encapsulated by one class:
++ SeedCV
+There is also a testbench function used to test the operation of the class and
+the functions within, but that is not used in the project.
 --------------------------------------------------------------------------------
 To use:
-Run camera_init() once to initialize the piCamera object and set a constant
-white balance. Camera init returns a camera object. An example of use is:
-    camera = camera_init()
-The function aruco_quadrant() can be ran repeatedly. It takes the parameter of
-the camera object and returns an integer [0,4] corresponding to the quadrant of 
-the image that a 6x6 aruco marker is detected in. The integers corresponding to
-each quadrant are:
-    0: no marker in image
-    *=====*=====*
-    |  2  |  1  |
-    *=====*=====*
-    |  3  |  4  |
-    *=====*=====*
-An example of use is:
-    quad = aruco_location(camera)
-    
+1. Import the python file to the project
+2. Create an instantiation of the SeedCV object
+    example: cv = SeedCV.SeedCV()
+3. Call functions from the class object as needed
+    example: angle, distance = cv.aruco_location()
+Details on the public class methods are included in the next section 
 --------------------------------------------------------------------------------
-camera_init()
+SeedCV.aruco_quadrant()
     params: none
-    returns: piCamera object
-    function: initializes a piCamera object and sets a constant white balance.
-
-aruco_quadrant(camera)
-    params: piCamera object camera
     returns: integer corresponding to image quadrant
     function: detects 6x6 aruco marker and determines its quadrant in the image.
-    Returns an integer corresponding to that quadrant.
+        Returns an integer corresponding to that quadrant. The integers
+        corresponding to each quadrant are:
+            0: no marker in image
+            *=====*=====*
+            |  2  |  1  |
+            *=====*=====*
+            |  3  |  4  |
+            *=====*=====*
+        An example of use is:
+            quad = cv.aruco_quadrant()
+            
+ SeedCV.aruco_location()
+    params: none
+    returns: angle from vertical of the marker in rad, distance of marker from
+        camera in ft
+    function: detects 6x6 aruco marker and determines its location with respect
+        to the camera. Returns the angle of the marker from the vertical and
+        the distance of the marker from the camera.
+        An example of use is:
+            theta, distance = cv.aruco_location()
     
     

@@ -18,7 +18,7 @@ DualMC33926MotorShield md;
 
 typedef enum {TEST2, TEST3SPIN,Test3wait, TEST3GO} TEST;
 // Use to change which test is currently being performed
-TEST currentTest = TEST2; //TEST2//TEST3SPIN
+TEST currentTest = TEST3SPIN; //TEST2//TEST3SPIN
 int lastTime = 0;
 
 // Target values
@@ -26,7 +26,7 @@ double distanceTarget;
 int targetMotorCounts;
 double rotationTarget;
 
-double theta = 2*1*PI;
+double theta = -2*1*PI;
 double thetaNow = 0.0;
 
 // Encoder counts
@@ -46,9 +46,9 @@ int mtrVal[2] = {0, 0};
 
 void setup() {
 // Change the assigned values to change the distances covered by the robot
-  distanceTarget = 7;
+  distanceTarget = 1;
   distanceTarget = feetToCounts(distanceTarget);
-  rotationTarget = 3*PI*(1);//leave 3 remove if needed
+  rotationTarget = -3*PI*(1);//leave 3 remove if needed
   md.init();
   Serial.begin(115200);
 }
@@ -79,15 +79,15 @@ void loop() {
       
     case TEST3SPIN:
       // TODO: Run motor to reach target angle
-      if (theta<0){
-        dir=-1;
+      if (theta>0){
+        dir=1;
       }
       thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
         turn(dir, distanceError, angleError, mtrVal);
         //md.setSpeeds(mtrVal[0], mtrVal[1]);
-      thetaError = abs(theta) - thetaNow;
+      thetaError = abs(theta) - abs(thetaNow);
       if (thetaError <= 0) {
         masterWheel.write(0);
         slaveWheel.write(0);
