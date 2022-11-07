@@ -18,7 +18,7 @@ DualMC33926MotorShield md;
 
 typedef enum {SEARCH, WAIT, TURN, DRIVE} MODE;
 // Use to change which test is currently being performed
-MODE currentMode = SEARCH; //TEST2//TEST3SPIN //SPIN
+MODE currentMode = SEARCH; 
 int lastTime = 0;
 
 // Target values
