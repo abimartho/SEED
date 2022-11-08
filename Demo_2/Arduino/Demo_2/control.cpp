@@ -73,7 +73,7 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   //mtrVal[0]=-150; //positive turns right
   //mtrVal[1]=-150;
   mtrCtrlVolt=kp*error; //this is in volts
-  mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+1520000; //We will need to tweek kp2 so that the motors line up
+  mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //We will need to tweek kp2 so that the motors line up
       
   mtrCtrlOut=((mtrCtrlVolt/7.5)*100); //was 50 but too weak
   mtrCtrlOut2=((mtrCtrlVolt2/7.5)*100);

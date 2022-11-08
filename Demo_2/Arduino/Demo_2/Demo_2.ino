@@ -32,6 +32,9 @@ int readStatus = 0;
 
 // Target values
 double distanceTarget = 0.0;
+double angleTarget = 0.0;
+double distanceReceived = 0.0;
+double angleReceived = 0.0;
 int targetMotorCounts = 0;
 //double rotationTarget;
 
@@ -149,8 +152,8 @@ void loop() {
         masterWheel.write(0);
         slaveWheel.write(0);
         delay(1000);
-        targetAngle = radsToCounts(angleReceived);
-        targetDistance = feetToCounts(distanceReceived);
+        angleTarget = radsToCounts(angleReceived);
+        distanceTarget = feetToCounts(distanceReceived);
       }
     break;
     }  
