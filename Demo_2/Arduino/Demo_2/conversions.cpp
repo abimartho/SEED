@@ -15,5 +15,5 @@ int radsToCounts(double rads) {
 }
 
 int degreesToCounts(double degree) {
-  return degree * R * ((2 * PI) / 360);
+  return degree * R * ((2 * 3.14) / 360);
 }

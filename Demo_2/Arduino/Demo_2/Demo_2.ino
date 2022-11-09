@@ -144,7 +144,10 @@ void loop() {
     case SEARCH:
       delay(100);
       if(stopCMD != 1){ //this just needs to be the intterupt
-        md.setSpeeds(150,150);
+        md.setSpeeds(125,125);
+        delay(250);
+        md.setSpeeds(0, 0);
+        delay(500);
         //testX++;
       }else{
         md.setSpeeds(0,0);
