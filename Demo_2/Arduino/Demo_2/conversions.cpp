@@ -13,3 +13,7 @@ double feetToCounts(double feet) {
 int radsToCounts(double rads) {
   return rads * R;
 }
+
+int degreesToCounts(double degree) {
+  return degree * R * ((2 * PI) / 360);
+}

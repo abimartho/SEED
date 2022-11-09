@@ -6,3 +6,4 @@
 int inchesToCounts(int inches);
 double feetToCounts(double feet);
 int radsToCounts(double rads);
+int degreesToCounts(double degree);
