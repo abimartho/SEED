@@ -24,8 +24,6 @@ class SeedCV:
     '''
     def __init__(self):
         self.camera = self.camera_init()
-        
-        
     
     '''
     Function: camera_init()
@@ -142,7 +140,7 @@ class SeedCV:
         # capture image and detect aruco marker
         image = self.cap_and_convert()
         #image = cv2.imread('test_images/img3.jpg') 
-        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_250)
+        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
         corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
         
         # parameters and constants

@@ -129,6 +129,7 @@ void loop() {
     md.setSpeeds(0,0);
     delay(1000);
     currentMode = DRIVE;
+    readStatus = 2;
     break;
     
     /*case TEST3GO:
@@ -173,8 +174,8 @@ void receiveData(int byteCount){
     state = 0;
     //readStatus = 0;
     stopCMD = 1;
-    angleReceived = data[1]/1000;
-    distanceReceived = data[2]/10;
+    angleReceived = data[2]/10;
+    distanceReceived = data[3];
   }
   //Arduino has recieved Angle
   /*else if (data[0] == 1) {

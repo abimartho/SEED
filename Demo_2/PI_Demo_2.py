@@ -29,12 +29,10 @@ def stateCam():
     angle, distance = cv.aruco_location()
     #angle = 2
     while angle == None:
-        print("Scanning")
         angle, distance = cv.aruco_location()
-        print(angle)
     if angle != None:
-        angle = int(angle*1000)
-        distance = int(distance*10)
+        angle = int(angle*10)
+        distance = int(distance)
         print("Switching State")
         writeNumber([angle,distance],0)
         return stateWait()
@@ -76,7 +74,7 @@ def stateDone():
     return stateStart()
 
 bus = smbus2.SMBus(1)
-
+time.sleep(1)
 # This is the address we setup in the Arduino Program
 address = 0x04
 
