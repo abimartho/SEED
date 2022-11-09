@@ -47,7 +47,7 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
 
   if (dir==1){
   mtrCtrlVolt=kp*error; //this is in volts
-  mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2); //We will need to tweek kp2 so that the motors line up
+  mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //We will need to tweek kp2 so that the motors line up
     
     
   mtrCtrlOut=((mtrCtrlVolt/7.5)*100); //was 50 but too weak
@@ -78,17 +78,17 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   mtrCtrlOut=((mtrCtrlVolt/7.5)*100); //was 50 but too weak
   mtrCtrlOut2=((mtrCtrlVolt2/7.5)*100);
 
-  if (mtrCtrlOut<-150){ 
-  mtrCtrlOut=-150;
+  if (mtrCtrlOut< 150){ //-150 and 150
+  mtrCtrlOut= 150;
   }
-  if (mtrCtrlOut>150){
-    mtrCtrlOut=150;
+  if (mtrCtrlOut> -150){
+    mtrCtrlOut= -150;
   }
-  if (mtrCtrlOut2<-250){ 
-    mtrCtrlOut2=-250;
-  }
-  if (mtrCtrlOut2>250){
+  if (mtrCtrlOut2<250){ //-250 and 250
     mtrCtrlOut2=250;
+  }
+  if (mtrCtrlOut2>-250){
+    mtrCtrlOut2=-250;
   }
     
   mtrVal[0]=-mtrCtrlOut;

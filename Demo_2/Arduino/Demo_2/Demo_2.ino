@@ -6,8 +6,9 @@
 
 
 #define LEFT_PIN_A  2
-#define RIGHT_PIN_A 3
 #define LEFT_PIN_B  5
+
+#define RIGHT_PIN_A 3
 #define RIGHT_PIN_B 6
 
 #define SAMPLE_TIME 10
@@ -97,7 +98,7 @@ void loop() {
       
     case TURN:
       // TODO: Run motor to reach target angle
-      if (theta>0){
+      if (angleReceived>0.0){
         dir=1;
       }else{
         dir=-1;
@@ -145,8 +146,11 @@ void loop() {
     case SEARCH:
       delay(100);
       if(stopCMD != 1){ //this just needs to be the intterupt
-        md.setSpeeds(150,150);
-        //testX++;
+        /*md.setSpeeds(125, 125);
+        delay(250);
+        md.setSpeeds(0, 0);
+        delay(750);
+        //testX++;*/
       }else{
         md.setSpeeds(0,0);
         currentMode = TURN;
@@ -164,7 +168,7 @@ void receiveData(int byteCount){
   int i=0;
   while( Wire.available()) {
     data[i] = Wire.read();
-    Serial.print(data[i]);
+    Serial.println(data[i]);
     Serial.print(' ');
     i++;
   }
@@ -174,8 +178,11 @@ void receiveData(int byteCount){
     state = 0;
     //readStatus = 0;
     stopCMD = 1;
-    angleReceived = data[2]/10;
-    distanceReceived = data[3];
+    Serial.println("Received Values");
+    angleReceived = data[2]/(200.0);
+    distanceReceived = data[3]/10.0;
+    Serial.println(angleReceived);
+    Serial.println(distanceReceived);
   }
   //Arduino has recieved Angle
   /*else if (data[0] == 1) {

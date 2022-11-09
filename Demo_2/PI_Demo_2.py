@@ -31,8 +31,13 @@ def stateCam():
     while angle == None:
         angle, distance = cv.aruco_location()
     if angle != None:
-        angle = int(angle*10)
-        distance = int(distance)
+        print(angle)
+        print(distance)
+        angle = int(angle*200)
+        distance = int(distance*10)
+        print("PreConversion")
+        print(angle)
+        print(distance)
         print("Switching State")
         writeNumber([angle,distance],0)
         return stateWait()
@@ -41,6 +46,7 @@ def stateCam():
 
 def stateWait():
     status = readNumber(4)
+    time.sleep(5)
     if status == 0:
         print("Pi Waiting") #Need to change so he only waits for state done
         return stateWait()
