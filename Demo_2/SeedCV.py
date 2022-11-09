@@ -164,7 +164,7 @@ class SeedCV:
             ca = int(center[0])
             h_pix = ca - cx
             h_cm = width_cm * h_pix / width_pix
-            theta = math.atan( h_cm / d )
+            theta = -1*math.atan( h_cm / d )
             return theta, d_ft
         except:
             # no markers detected
