@@ -33,13 +33,12 @@ int readStatus = 0;
 
 // Target values
 double distanceTarget = 0.0;
-double angleTarget = 0.0;
 double distanceReceived = 0.0;
 double angleReceived = 0.0;
 int targetMotorCounts = 0;
 //double rotationTarget;
 
-double theta = -1.9*PI*(.5); //1.9 is fudge
+
 double thetaNow = 0.0;
 
 // Encoder counts
@@ -48,7 +47,6 @@ int currentCountsSlave = 0;
 
 // Error values
 double distanceError = 0.0;
-double rotationError = 0.0;
 double wheelError = 0.0;
 double angleError = 0.0;
 double thetaError = 0.0;
@@ -77,7 +75,6 @@ void loop() {
   currentCountsSlave = slaveWheel.read();
   wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
   distanceError = distanceTarget - currentCountsMaster;
-  rotationError = angleTarget - currentCountsMaster;
   angleError = currentCountsMaster - currentCountsSlave;//got rid of abs I think this might have messed it up.
   
   
@@ -106,10 +103,10 @@ void loop() {
       thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
-        turn(dir, rotationError, angleError, mtrVal);
+        turn(dir, distanceError, angleError, mtrVal);
         //md.setSpeeds(mtrVal[0], mtrVal[1]);
       
-      thetaError = abs(theta) - abs(thetaNow);
+      thetaError = abs(angleReceived) - abs(thetaNow);
       //after doing some math this should work for both
       //-5--1=-4, 5-1=4 but we don't want negative for next if statement
       
@@ -157,7 +154,7 @@ void loop() {
         masterWheel.write(0);
         slaveWheel.write(0);
         delay(1000);
-        angleTarget = radsToCounts(angleReceived);
+        
         distanceTarget = feetToCounts(distanceReceived);
       }
     break;
