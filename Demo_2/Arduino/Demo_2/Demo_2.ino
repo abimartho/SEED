@@ -43,15 +43,15 @@ double theta = -1.9*PI*(.5); //1.9 is fudge
 double thetaNow = 0.0;
 
 // Encoder counts
-int currentCountsMaster = 0;
-int currentCountsSlave = 0;
+double currentCountsMaster = 0.0;
+double currentCountsSlave = 0.0;
 
 // Error values
-double distanceError = 0.0;
-double rotationError = 0.0;
-double wheelError = 0.0;
-double angleError = 0.0;
-double thetaError = 0.0;
+double distanceError = 0.00;
+double rotationError = 0.00;
+double wheelError = 0.00;
+double angleError = 0.00;
+double thetaError = 0.00;
 
 int dir=-1;
 int testX=0;
@@ -77,28 +77,29 @@ void loop() {
   currentCountsSlave = slaveWheel.read();
   wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
   distanceError = distanceTarget - currentCountsMaster;
-  rotationError = angleTarget - currentCountsMaster;
-  angleError = currentCountsMaster - currentCountsSlave;//got rid of abs I think this might have messed it up.
-  
+
   
   
   // Convert Errors to radians
   distanceError = distanceError * (PI / 1600);
   wheelError = wheelError * (PI / 1600);
-  angleError=angleError*(PI/1600);//added
+
   
   switch(currentMode){
     case DRIVE:
-      if(millis() >= SAMPLE_TIME + lastTime) {
-        lastTime = millis();
+      //if(millis() >= SAMPLE_TIME + lastTime) {
+        //lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
         md.setSpeeds(mtrVal[0], mtrVal[1]);
-      }
+      //}
       break;
       
     case TURN:
       // TODO: Run motor to reach target angle
-      if (angleReceived>0.0){
+      rotationError = angleTarget - currentCountsMaster;
+      angleError = currentCountsMaster - currentCountsSlave;//got rid of abs I think this might have messed it up.
+      angleError=angleError*(PI/1600);//added
+      if (angleReceived > 0.0){
         dir=1;
       }else{
         dir=-1;
@@ -107,58 +108,44 @@ void loop() {
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
         turn(dir, rotationError, angleError, mtrVal);
-        //md.setSpeeds(mtrVal[0], mtrVal[1]);
-      
-      thetaError = abs(theta) - abs(thetaNow);
+        thetaError = abs(angleTarget) - abs(thetaNow);
       //after doing some math this should work for both
       //-5--1=-4, 5-1=4 but we don't want negative for next if statement
       
-      if (thetaError <= 0) {
-        masterWheel.write(0);
-        slaveWheel.write(0);
-        currentMode = WAIT;
-      }else{
-        md.setSpeeds(mtrVal[0],mtrVal[1]);
-      }
-      
+        if (thetaError <= 0.0) {
+          currentMode = WAIT;
+        }else{
+          md.setSpeeds(mtrVal[0],mtrVal[1]);
+        }
       }
       // TODO: transition to go state, reset encoders to 0
       
       break;
       
     case WAIT:
-    md.setSpeeds(0,0);
-    delay(1000);
-    currentMode = DRIVE;
-    readStatus = 2;
+      md.setSpeeds(0,0);
+      masterWheel.write(0);
+      slaveWheel.write(0);
+      delay(1000);
+      currentMode = DRIVE;
+      readStatus = 2;
     break;
     
-    /*case TEST3GO:
-    masterWheel.write(0);
-    slaveWheel.write(0);
-      if(millis() >= SAMPLE_TIME + lastTime) {
-        lastTime = millis();
-        drive(distanceError, wheelError, mtrVal);
-        md.setSpeeds(mtrVal[0], mtrVal[1]);
-      }
-      break;
-    */
     case SEARCH:
       delay(100);
       if(stopCMD != 1){ //this just needs to be the intterupt
-        /*md.setSpeeds(125, 125);
+        md.setSpeeds(125, 125);
         delay(250);
         md.setSpeeds(0, 0);
         delay(750);
-        //testX++;*/
       }else{
         md.setSpeeds(0,0);
-        currentMode = TURN;
+        angleTarget = radsToCounts(angleReceived);
+        distanceTarget = feetToCounts(distanceReceived  - 0.2);
         masterWheel.write(0);
         slaveWheel.write(0);
-        delay(1000);
-        angleTarget = radsToCounts(angleReceived);
-        distanceTarget = feetToCounts(distanceReceived);
+        currentMode = TURN;
+        delay(3000);
       }
     break;
     }  
@@ -179,23 +166,15 @@ void receiveData(int byteCount){
     //readStatus = 0;
     stopCMD = 1;
     Serial.println("Received Values");
-    angleReceived = data[2]/(200.0);
+    if (data[2] > 127){
+      data[2] = 256 - data[2];
+      data[2] *= -1;
+    }
+    angleReceived = data[2]/(-200.0);
     distanceReceived = data[3]/10.0;
     Serial.println(angleReceived);
     Serial.println(distanceReceived);
   }
-  //Arduino has recieved Angle
-  /*else if (data[0] == 1) {
-    state = 1;
-    angleReceived = data[1]/1000;
-    readStatus = 1;
-  }
-  //Arduino has recieved Distance
-  else if (data[0] == 2){
-    state = 2;
-    distanceReceived = data[1]/10;
-    readStatus = 2;
-  }*/
   //Read Request
   else if (data[0] == 4){
     state = 4;
@@ -207,14 +186,4 @@ void sendData(){
   if (state == 4){
     Wire.write(readStatus);
   }
-  /*else if (state == 0) {
-    //Use to indicate that Arduino has stopped and wants Angle
-    Wire.write(0);
-  }
-  else if(state == 1){
-    Wire.write(1); //Indicate Arduino is Lined up With Angle
-  }
-  else if(state == 2){
-    Wire.write(2);  //Indiacte Arduino is at Marker
-  }*/
 }

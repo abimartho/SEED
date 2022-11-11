@@ -10,8 +10,8 @@ double feetToCounts(double feet) {
   return 2080 * feet;
 }
 
-int radsToCounts(double rads) {
-  return rads * R;
+double radsToCounts(double rads) {
+  return (rads / 2.5) * R;
 }
 
 /*int degreesToCounts(double degree) {

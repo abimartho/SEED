@@ -5,5 +5,5 @@
 #define R 5.5
 int inchesToCounts(int inches);
 double feetToCounts(double feet);
-int radsToCounts(double rads);
+double radsToCounts(double rads);
 int degreesToCounts(double degree);
