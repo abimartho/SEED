@@ -19,7 +19,7 @@ Encoder slaveWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 
 DualMC33926MotorShield md;
 
-typedef enum {SEARCH, WAIT, TURN, DRIVE} MODE;
+typedef enum {SEARCH, WAIT, TURN, DRIVE, WAITDIST} MODE;
 // Use to change which test is currently being performed
 MODE currentMode = SEARCH; 
 int lastTime = 0;
@@ -130,22 +130,30 @@ void loop() {
       currentMode = DRIVE;
       readStatus = 2;
     break;
-    
-    case SEARCH:
-      delay(100);
-      if(stopCMD != 1){ //this just needs to be the intterupt
-        md.setSpeeds(125, 125);
-        delay(250);
-        md.setSpeeds(0, 0);
-        delay(750);
-      }else{
-        md.setSpeeds(0,0);
+
+    case WAITDIST:
+      if (state == 0){
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
         masterWheel.write(0);
         slaveWheel.write(0);
         currentMode = TURN;
-        delay(3000);
+      }
+    break;
+    
+    case SEARCH:
+      if(stopCMD == 1) {
+        md.setSpeeds(0, 0);
+       // delay(500);
+        //angleTarget = radsToCounts(angleReceived);
+        //distanceTarget = feetToCounts(distanceReceived  - 0.2);
+        masterWheel.write(0);
+        slaveWheel.write(0);
+        currentMode = WAITDIST;
+      } else if(millis() % 500 < 250 && stopCMD != 1) {
+        md.setSpeeds(125, 125);
+      } else if (millis() % 500 > 250) {
+        md.setSpeeds(0, 0);
       }
     break;
     }  
@@ -164,16 +172,21 @@ void receiveData(int byteCount){
   if (data[0] == 0) {
     state = 0;
     //readStatus = 0;
-    stopCMD = 1;
+    //stopCMD = 1;
     Serial.println("Received Values");
     if (data[2] > 127){
       data[2] = 256 - data[2];
       data[2] *= -1;
     }
-    angleReceived = data[2]/(-200.0);
+    angleReceived = data[2]/(200.0);
     distanceReceived = data[3]/10.0;
     Serial.println(angleReceived);
     Serial.println(distanceReceived);
+  }
+  else if(data[0] == 1){
+    state = 1;
+    readStatus = 1;
+    stopCMD = 1;
   }
   //Read Request
   else if (data[0] == 4){
