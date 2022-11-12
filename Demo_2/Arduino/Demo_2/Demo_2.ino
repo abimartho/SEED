@@ -47,13 +47,13 @@ double currentCountsMaster = 0.0;
 double currentCountsSlave = 0.0;
 
 // Error values
-double distanceError = 0.00;
-double rotationError = 0.00;
-double wheelError = 0.00;
-double angleError = 0.00;
-double thetaError = 0.00;
+double distanceError = 0.00;//how far away am I
+double rotationError = 0.00;//what angle am I facing
+double wheelError = 0.00;//error between wheels
+double angleError = 0.00;//error between wheels
+double thetaError = 0.00;//what angle am I facing
 
-int dir=-1;
+int dir=-1; //which way
 int testX=0;
 int stopCMD = 0;
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
@@ -73,7 +73,7 @@ void setup() {
 
 void loop() {
   targetMotorCounts = inchesToCounts(distanceTarget);
-  currentCountsMaster = masterWheel.read();
+  currentCountsMaster = masterWheel.read();//get encoder values
   currentCountsSlave = slaveWheel.read();
   wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
   distanceError = distanceTarget - currentCountsMaster;
@@ -82,7 +82,7 @@ void loop() {
   
   // Convert Errors to radians
   distanceError = distanceError * (PI / 1600);
-  wheelError = wheelError * (PI / 1600);
+  wheelError = wheelError * (PI / 1600); 
 
   
   switch(currentMode){
@@ -97,7 +97,7 @@ void loop() {
     case TURN:
       // TODO: Run motor to reach target angle
       rotationError = angleTarget - currentCountsMaster;
-      angleError = currentCountsMaster - currentCountsSlave;//got rid of abs I think this might have messed it up.
+      angleError = currentCountsMaster - currentCountsSlave;
       angleError=angleError*(PI/1600);//added
       if (angleReceived > 0.0){
         dir=1;
@@ -108,9 +108,8 @@ void loop() {
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
         turn(dir, rotationError, angleError, mtrVal);
-        thetaError = abs(angleTarget) - abs(thetaNow);
-      //after doing some math this should work for both
-      //-5--1=-4, 5-1=4 but we don't want negative for next if statement
+        thetaError = abs(angleTarget) - abs(thetaNow);//make sure it is the angle we want it
+     
       
         if (thetaError <= 0.0) {
           currentMode = WAIT;
