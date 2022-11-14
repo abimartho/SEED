@@ -11,3 +11,6 @@ This project involves the successful performance of completion of three differen
 ### Demo 2
 Demo 2 involves finding and moving to an Aruco marker. Initially, the robot will not be facing the marker, so it will have to first search for it. The marker will  be between 3 and 5 feet away from the robot, and the marker will be oriented so that it points towards robot’s initial location.  
 Documentation: [SEED/Demo_2/readme.md](https://github.com/abimartho/SEED/blob/main/Demo_2/README.md)
+### Final Demo
+The final demo involves finding and moving to 6 markers in a specified order.  
+Documentation: [SEED/Demo_2/readme.md](https://github.com/abimartho/SEED/blob/main/Final_Project/README.md)
