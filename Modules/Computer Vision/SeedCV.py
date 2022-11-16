@@ -5,8 +5,9 @@ Date: 10/31/22
 '''
 
 import time, cv2, math
-from picamera import PiCamera
-from picamera.array import PiRGBArray
+import numpy as np
+#from picamera import PiCamera
+#from picamera.array import PiRGBArray
 
 class SeedCV:
     #==========================================================================
@@ -32,6 +33,7 @@ class SeedCV:
     Outputs: PiCamera Object
     '''
     def camera_init(self):
+        '''
         # init camera object
         camera = PiCamera()
         # wait to let white balance settle
@@ -41,6 +43,8 @@ class SeedCV:
         camera.awb_mode = 'off'
         camera.awb_gains = gains
         # return camera object
+        '''
+        camera = None
         return camera
     
     '''
@@ -50,11 +54,14 @@ class SeedCV:
     Outputs: Grayscale Image Array
     '''
     def cap_and_convert(self):
+        '''
         # capture image and convert to grayscale
         rawCapture = PiRGBArray(self.camera)
         self.camera.capture(rawCapture, format='bgr')
         image = rawCapture.array
         grayscale_img = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
+        '''
+        grayscale_img = None
         return grayscale_img
     
     '''
@@ -87,6 +94,24 @@ class SeedCV:
         except:
             print('exception')
             return 0
+
+    '''
+    Function: center_single()
+    Computes the center of the aruco marker
+    Inputs: The corners aray as computed by detect markers
+    Outputs: The center of the first marker in the list as coordinates (x, y)
+    '''
+    def center_single(self, corners):
+        # compute aruco center
+        x = 0
+        y = 0
+        for i in range(4):
+            x += corners[i][0]
+            y += corners[i][1]
+        x = int(x/4)
+        y = int(y/4)
+        return (x, y)
+
     
     '''
     Function: aruco_quadrant
@@ -169,3 +194,48 @@ class SeedCV:
         except:
             # no markers detected
             return None, None
+
+    '''
+    Function: find_marker
+    Input: id of target marker
+    Output: Angle from vertical of the marker in radians, distance of marker from camera in ft
+            Returns None if that marker not detected in the image
+    '''
+    def find_marker(self, id):
+        # capture image and detect aruco marker
+        #image = self.cap_and_convert()             # demos use 4X4 markers
+        image = cv2.imread('test_images/img2.jpg')  # test images use 6X6 markers
+        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+        corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
+
+        # marker not in view
+        if id not in ids:
+            return None, None
+
+        # get index of id in list and find corresponding corners
+        temp = np.where(ids==id)
+        idx = [int(temp[0]), int(temp[1])]
+        target_corners = corners[idx[0]][idx[1]]
+
+        # parameters and constants
+        fov_x = 53.50 * math.pi / 360 # converted to radians and halved
+        width_pix = image.shape[1]
+        cx = width_pix // 2
+
+        # compute marker's distance from camera
+        aruco_pix = self.distance(target_corners[0], target_corners[1])
+        width_cm = ( self.marker_dimension * width_pix) / aruco_pix
+        half_width_cm = width_cm / 2
+        d = half_width_cm / math.tan(fov_x)
+
+        # convert cm to ft for the return value
+        cm_per_ft = 30.48
+        d_ft = d / cm_per_ft
+
+        # use this distance and marker center to find angle from cam
+        center = self.center_single(target_corners)
+        ca = int(center[0])
+        h_pix = ca - cx
+        h_cm = width_cm * h_pix / width_pix
+        theta = math.atan( h_cm / d )
+        return theta, d_ft
