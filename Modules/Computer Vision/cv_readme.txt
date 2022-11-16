@@ -1,7 +1,7 @@
 ================================================================================
                    Marker Detection Scheme Documentation
 --------------------------------------------------------------------------------
-                     EENG 350 | 10-2-22 | Abi Thompson
+                    EENG 350 | 11-16-22 | Abi Thompson
 ================================================================================
 
 The marker detection scheme is encapsulated by one class:
@@ -32,7 +32,7 @@ SeedCV.aruco_quadrant()
         An example of use is:
             quad = cv.aruco_quadrant()
             
- SeedCV.aruco_location()
+SeedCV.aruco_location()
     params: none
     returns: angle from vertical of the marker in rad, distance of marker from
         camera in ft
@@ -42,4 +42,14 @@ SeedCV.aruco_quadrant()
         An example of use is:
             theta, distance = cv.aruco_location()
     
+SeedCV.find_marker(id)
+    params: the id of the target marker
+    returns: Angle from vertical of the marker in radians, distance of marker 
+        from camera in ft. None, None if marker not detected in the image
+    function: detects a specific aruco marker as specified by the user and 
+        determines its location with respect to the camera. Returns the angle of
+        the marker from the vertical and the distance of the marker from the
+        camera.
+        An example of use is:
+            theta, distance = cv.find_marker(1)
     
