@@ -6,8 +6,8 @@ Date: 10/31/22
 
 import time, cv2, math
 import numpy as np
-#from picamera import PiCamera
-#from picamera.array import PiRGBArray
+from picamera import PiCamera
+from picamera.array import PiRGBArray
 
 class SeedCV:
     #==========================================================================
@@ -33,7 +33,7 @@ class SeedCV:
     Outputs: PiCamera Object
     '''
     def camera_init(self):
-        '''
+        #'''
         # init camera object
         camera = PiCamera()
         # wait to let white balance settle
@@ -43,8 +43,8 @@ class SeedCV:
         camera.awb_mode = 'off'
         camera.awb_gains = gains
         # return camera object
-        '''
-        camera = None
+        #'''
+        #camera = None
         return camera
     
     '''
@@ -54,14 +54,14 @@ class SeedCV:
     Outputs: Grayscale Image Array
     '''
     def cap_and_convert(self):
-        '''
+        #'''
         # capture image and convert to grayscale
         rawCapture = PiRGBArray(self.camera)
         self.camera.capture(rawCapture, format='bgr')
         image = rawCapture.array
         grayscale_img = cv2.cvtColor(image, code=cv2.COLOR_BGR2GRAY)
-        '''
-        grayscale_img = None
+        #'''
+        #grayscale_img = None
         return grayscale_img
     
     '''
@@ -98,8 +98,8 @@ class SeedCV:
     '''
     Function: center_single()
     Computes the center of the aruco marker
-    Inputs: The corners aray as computed by detect markers
-    Outputs: The center of the first marker in the list as coordinates (x, y)
+    Inputs: The corners aray of a single marker
+    Outputs: The center of the marker in the tuple as coordinates (x, y)
     '''
     def center_single(self, corners):
         # compute aruco center
@@ -203,9 +203,9 @@ class SeedCV:
     '''
     def find_marker(self, id):
         # capture image and detect aruco marker
-        #image = self.cap_and_convert()             # demos use 4X4 markers
-        image = cv2.imread('test_images/img2.jpg')  # test images use 6X6 markers
-        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+        image = self.cap_and_convert()             # demos use 4X4 markers
+        #image = cv2.imread('test_images/img2.jpg')  # test images use 6X6 markers
+        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_250)
         corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
 
         # marker not in view
