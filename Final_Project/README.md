@@ -7,5 +7,8 @@ Code for Final Project/Demo
 - [x] Determine Finite State Machine Implementation for Arduino
 - [x] Rebuild FSM for Python/Pi
 - [ ] Determine Motor Controller Appropriate Final Demo Speed
-- [ ] Computer Vision Compare Aruco to Stored Marker
+- [x] Computer Vision Compare Aruco to Stored Marker
 - [ ] Determine how CV tells Python and Arduino what Aruco Marker or Directions to Use
+
+### Module Documentation
+[SeedCV](https://github.com/abimartho/SEED/blob/main/Modules/Computer%20Vision/cv_readme.txt)
