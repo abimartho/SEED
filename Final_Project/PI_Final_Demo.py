@@ -47,8 +47,6 @@ def stateWait():
     status = readNumber(4)
     if status == 5:
         return stateDimensions()
-    #elif status == 1:
-        #return stateDistance()
     elif status == 6:
         marker += 1
         return stateCam()

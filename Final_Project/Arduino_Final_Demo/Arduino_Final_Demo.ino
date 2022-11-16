@@ -144,7 +144,6 @@ void loop() {
       slaveWheel.write(0);
       delay(1000);
       currentMode = DRIVE;
-      readStatus = 2;
     break;
 
     case DELAY4STOP:
