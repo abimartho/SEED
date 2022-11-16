@@ -105,6 +105,9 @@ void loop() {
         //lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
         md.setSpeeds(mtrVal[0], mtrVal[1]);
+        if(distnaceError < 100) {
+          currentMode = STOP;
+        }
       //}
       break;
       
