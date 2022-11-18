@@ -7,14 +7,6 @@ import smbus2 #Defines I2C
 import time
 import SeedCV
 
-state_dictionary = {
-    stateStart : "Start",
-    stateCam : "Sampling Camera",
-    stateStop : "Arduino Stopping",
-    stateWait : "Waiting for Arduino Operation",
-    stateDimensions : "Sending Arduino Angle and Distance",
-    stateDone : "All Done"
-    }
 
 markerCount = 1
 #Write number entered to specific register
@@ -30,6 +22,7 @@ def readNumber(offReg):
 def stateStart():
     val = input("Begin Clyde (y/n): ")
     if val == 'y' or val == 'Y':
+        writeBlock([0,0],0)
         return stateCam()
     elif val == 'n' or val == 'N':
         exit
@@ -39,7 +32,8 @@ def stateStart():
 def stateCam():
     angle, distance = cv.aruco_location()
     if angle != None:
-        return stateStop()
+        writeBlock([0,0],1)
+        return stateWait()
     else:
         return stateCam()
 
@@ -52,7 +46,7 @@ def stateWait():
         return stateCam()
     elif status == 7:
         marker = 1
-        return stateStart()
+        return stateDone()
     time.sleep(.5)
     
 def stateDimensions():
@@ -60,11 +54,13 @@ def stateDimensions():
     if angle != None:
         angle = int(angle*200)
         distance = int(distance*10)
-        writeBlock([angle,distance],0)
-        return stateWait
+        print(angle)
+        print(distance)
+        writeBlock([angle,distance],2)
+        return stateWait()
     else:
         print("ArUco Maker Lost, Entering Search")
-        #writeBlock([0,0],xyz to go to search mode)
+        writeBlock([0,0],9)
         return stateCam()
 
 def stateDone():
@@ -77,6 +73,14 @@ time.sleep(1)
 address = 0x04
 
 cv = SeedCV.SeedCV()
+
+state_dictionary = {
+    stateStart : "Start",
+    stateCam : "Sampling Camera",
+    stateWait : "Waiting for Arduino Operation",
+    stateDimensions : "Sending Arduino Angle and Distance",
+    stateDone : "All Done"
+    }
 
 #Until you exit loop through function
 state = stateStart #Start pointer

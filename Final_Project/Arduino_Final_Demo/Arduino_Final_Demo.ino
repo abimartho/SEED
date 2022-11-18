@@ -32,7 +32,7 @@ int offsetReg = 0;        //Current
 int data[8];          //I2C "Blocks"
 int startReg = 0;
 int stopReg = 1;
-int dimensionsReg = 2;
+int dimensionReg = 2;
 int readReg = 4;      //ReadReg all I2C coms starting with 4 are a read
 int readStatus = 0;   //Updates based on Arduino's State to Tell Pi
 
@@ -61,7 +61,8 @@ double thetaError = 0.00;//what angle am I facing
 // General Command/Tracking
 int markerCount = 1;
 int stopCMD = 0;
-int startCMD = 1;
+int startCMD = 0;
+int dir = 0;
 
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
 int mtrVal[2] = {0, 0};
@@ -79,6 +80,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(currentMode);
   targetMotorCounts = inchesToCounts(distanceTarget);
   currentCountsMaster = masterWheel.read();//get encoder values
   currentCountsSlave = slaveWheel.read();
@@ -105,7 +107,7 @@ void loop() {
         //lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
         md.setSpeeds(mtrVal[0], mtrVal[1]);
-        if(distnaceError < 100) {
+        if(distanceError < 100) {
           currentMode = STOP;
         }
       //}
@@ -216,6 +218,10 @@ void receiveData(int byteCount){
   }
   else if (data[0] == readReg){
     offsetReg = readReg;
+  }
+  else if (data[0] == 9){
+    offsetReg = 9;
+    currentMode = SEARCH;
   }
 }
 
