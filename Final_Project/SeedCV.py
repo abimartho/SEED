@@ -201,7 +201,7 @@ class SeedCV:
     Output: Angle from vertical of the marker in radians, distance of marker from camera in ft
             Returns None if that marker not detected in the image
     '''
-    def find_marker(self, id):
+    def find_marker(self, marker):
         # capture image and detect aruco marker
         image = self.cap_and_convert()             # demos use 4X4 markers
         #image = cv2.imread('test_images/img2.jpg')  # test images use 6X6 markers
@@ -209,11 +209,13 @@ class SeedCV:
         corners, ids, temp = cv2.aruco.detectMarkers(image, aruco_dict)
 
         # marker not in view
-        if id not in ids:
+        if ids==None:
+            return None, None
+        if marker not in ids:
             return None, None
 
         # get index of id in list and find corresponding corners
-        temp = np.where(ids==id)
+        temp = np.where(ids==marker)
         idx = [int(temp[0]), int(temp[1])]
         target_corners = corners[idx[0]][idx[1]]
 

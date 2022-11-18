@@ -107,7 +107,8 @@ void loop() {
         //lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
         md.setSpeeds(mtrVal[0], mtrVal[1]);
-        if(distanceError < 100) {
+        if(distanceError < 1) {
+          md.setSpeeds(0,0);
           currentMode = STOP;
         }
       //}
@@ -151,6 +152,7 @@ void loop() {
     case DELAY4STOP:
       //readStatus = 5; // Tell PI it is waiting to receive dimensions
       if (offsetReg == dimensionReg){
+        stopCMD = 0;
         masterWheel.write(0);
         slaveWheel.write(0);
         angleTarget = radsToCounts(angleReceived);

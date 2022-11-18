@@ -7,8 +7,7 @@ import smbus2 #Defines I2C
 import time
 import SeedCV
 
-# This is the address we setup in the Arduino Program
-address = 0x04
+
 
 #Write number entered to specific register
 def writeBlock(value, offReg):
@@ -20,36 +19,41 @@ def readNumber(offReg):
     number = bus.read_byte_data(address,offReg)
     return number
 
-def stateStart():
+def incMarker(markerCount):
+    markerCount += 1
+
+def stateStart(markerCount):
     val = input("Begin Clyde (y/n): ")
     if val == 'y' or val == 'Y':
         writeBlock([0,0],0)
-        return stateCam()
+        return stateCam(markerCount)
     elif val == 'n' or val == 'N':
         exit
     else:
-        return stateStart()
+        return stateStart(markerCount)
 
-def stateCam():
+def stateCam(markerCount):
     angle, distance = cv.find_marker(markerCount)
     if angle != None:
         writeBlock([0,0],1)
         time.sleep(1)
-        return stateDimensions()
+        return stateDimensions(markerCount)
     else:
-        return stateCam()
+        return stateCam(markerCount)
 
-def stateWait():
+def stateWait(markerCount):
+    time.sleep(1)
     status = readNumber(4)
     if status == 6:
-        marker += 1
-        return stateCam()
+        markerCount += 1
+        return stateCam(markerCount)
     elif status == 7:
-        marker = 1
-        return stateDone()
-    time.sleep(.5)
+        markerCount = 1
+        return stateDone(markerCount)
+    else:
+        return stateWait(markerCount)
     
-def stateDimensions():
+def stateDimensions(markerCount):
     angle, distance = cv.find_marker(markerCount)
     if angle != None:
         angle = int(angle*200)
@@ -57,22 +61,23 @@ def stateDimensions():
         print(angle)
         print(distance)
         writeBlock([angle,distance],2)
-        return stateWait()
+        return stateWait(markerCount)
     else:
         print("ArUco Maker Lost, Entering Search")
         writeBlock([0,0],9)
-        return stateCam()
+        return stateCam(markerCount)
 
-def stateDone():
+def stateDone(markerCount):
     print("Finished")
-    return stateStart()
+    return stateStart(markerCount)
 
-
+# This is the address we setup in the Arduino Program
+address = 0x04
 
 bus = smbus2.SMBus(1)
 time.sleep(1)
 
-markerCount = 1
+
 cv = SeedCV.SeedCV()
 
 state_dictionary = {
@@ -85,8 +90,9 @@ state_dictionary = {
 
 #Until you exit loop through function
 state = stateStart #Start pointer
+markerCount = 1
 while True:
-    next_state = state()
+    next_state = state(markerCount)
     state = next_state
 
 
