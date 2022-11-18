@@ -7,6 +7,8 @@ import smbus2 #Defines I2C
 import time
 import SeedCV
 
+# This is the address we setup in the Arduino Program
+address = 0x04
 
 markerCount = 1
 #Write number entered to specific register
@@ -67,10 +69,10 @@ def stateDone():
     print("Finished")
     return stateStart()
 
+
+
 bus = smbus2.SMBus(1)
 time.sleep(1)
-# This is the address we setup in the Arduino Program
-address = 0x04
 
 cv = SeedCV.SeedCV()
 
