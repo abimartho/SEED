@@ -184,8 +184,11 @@ void loop() {
 
     case STOP:
       if (markerCount != 6){
+        masterWheel.write(0);
+        slaveWheel.write(0);
         readStatus = 6; // Tells Pi to go to next Marker
         delay(5000);
+        offsetReg = 0;
         markerCount += 1;
         currentMode = SEARCH;
       }
@@ -215,6 +218,7 @@ void receiveData(int byteCount){
   }
   else if(data[0] == startReg){
     startCMD = 1;
+    offsetReg = 0;
   }
   else if (data[0] == stopReg){
     stopCMD = 1;
