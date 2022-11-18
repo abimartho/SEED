@@ -8,7 +8,6 @@ import time
 import SeedCV
 
 
-markerCount = 1
 #Write number entered to specific register
 def writeBlock(value, offReg):
     bus.write_block_data(address, offReg, value)
@@ -30,18 +29,17 @@ def stateStart():
         return stateStart()
 
 def stateCam():
-    angle, distance = cv.aruco_location()
+    angle, distance = cv.find_marker(markerCount)
     if angle != None:
         writeBlock([0,0],1)
-        return stateWait()
+        time.sleep(1)
+        return stateDimensions()
     else:
         return stateCam()
 
 def stateWait():
     status = readNumber(4)
-    if status == 5:
-        return stateDimensions()
-    elif status == 6:
+    if status == 6:
         marker += 1
         return stateCam()
     elif status == 7:
@@ -50,7 +48,7 @@ def stateWait():
     time.sleep(.5)
     
 def stateDimensions():
-    angle, distance = cv.aruco_location()
+    angle, distance = cv.find_marker(markerCount)
     if angle != None:
         angle = int(angle*200)
         distance = int(distance*10)
@@ -72,6 +70,7 @@ time.sleep(1)
 # This is the address we setup in the Arduino Program
 address = 0x04
 
+markerCount = 1
 cv = SeedCV.SeedCV()
 
 state_dictionary = {

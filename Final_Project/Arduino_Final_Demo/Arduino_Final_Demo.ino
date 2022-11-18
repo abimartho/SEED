@@ -149,11 +149,13 @@ void loop() {
     break;
 
     case DELAY4STOP:
-      readStatus = 5; // Tell PI it is waiting to receive dimensions
-      if (offsetReg == 0){
+      //readStatus = 5; // Tell PI it is waiting to receive dimensions
+      if (offsetReg == dimensionReg){
         masterWheel.write(0);
         slaveWheel.write(0);
-        currentMode = RECEIVECMD;
+        angleTarget = radsToCounts(angleReceived);
+        distanceTarget = feetToCounts(distanceReceived  - 0.2);
+        currentMode = TURN;
       }
     break;
     
