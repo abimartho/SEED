@@ -18,7 +18,6 @@ Encoder slaveWheel(RIGHT_PIN_A, RIGHT_PIN_B);
 #define SAMPLE_TIME 10
 
 DualMC33926MotorShield md;
-
 // Arduino FSM States
 typedef enum {START, SEARCH, DELAY4STOP, RECEIVECMD, WAIT, TURN, DRIVE, STOP} MODE;
 
@@ -63,6 +62,7 @@ int markerCount = 1;
 int stopCMD = 0;
 int startCMD = 0;
 int dir = 0;
+int i = 0;
 
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
 int mtrVal[2] = {0, 0};
@@ -80,13 +80,11 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(currentMode);
   targetMotorCounts = inchesToCounts(distanceTarget);
   currentCountsMaster = masterWheel.read();//get encoder values
   currentCountsSlave = slaveWheel.read();
   wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
   distanceError = distanceTarget - currentCountsMaster;
-
   
   
   // Convert Errors to radians
@@ -116,19 +114,25 @@ void loop() {
       
     case TURN:
       // TODO: Run motor to reach target angle
-      rotationError = angleTarget - currentCountsMaster;
-      angleError = currentCountsMaster - currentCountsSlave;
-      angleError=angleError*(PI/1600);//added
+      rotationError = angleTarget - currentCountsMaster; //Counts
+      angleError = currentCountsMaster - currentCountsSlave; //Counts
+      angleError=angleError*(PI/1600); //Radians
+      rotationError = rotationError*(PI/1600);
+      if (i == 10){
+        i = 0;
+        Serial.println(angleError);
+        Serial.println(thetaError);
+      }
       if (angleReceived > 0.0){
-        dir=1;
+        dir = 1;
       }else{
-        dir=-1;
+        dir =- 1;
       }
       thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
         turn(dir, rotationError, angleError, mtrVal);
-        thetaError = abs(angleTarget) - abs(thetaNow);//make sure it is the angle we want it
+        thetaError = abs(angleTarget*(PI/1600)) - abs(thetaNow);//make sure it is the angle we want it
      
       
         if (thetaError <= 0.0) {
@@ -136,9 +140,10 @@ void loop() {
         }else{
           md.setSpeeds(mtrVal[0],mtrVal[1]);
         }
+        
       }
       // TODO: transition to go state, reset encoders to 0
-      
+      i += 1;
       break;
       
     case WAIT:
@@ -158,6 +163,7 @@ void loop() {
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
         currentMode = TURN;
+        offsetReg = 0;
       }
     break;
     
@@ -186,6 +192,10 @@ void loop() {
       if (markerCount != 6){
         masterWheel.write(0);
         slaveWheel.write(0);
+        rotationError = 0;
+        angleError = 0;
+        thetaError = 0;
+        angleTarget = 0;
         readStatus = 6; // Tells Pi to go to next Marker
         delay(5000);
         offsetReg = 0;

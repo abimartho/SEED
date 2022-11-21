@@ -45,7 +45,7 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   double mtrCtrlVolt2 = 0;
   double spinOther=0;
 
-  if (dir==1){
+  if (dir == 1){
     mtrCtrlVolt=kp*error; //this is in volts
     mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //We will need to tweek kp2 so that the motors line up
     
@@ -70,25 +70,25 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   
   } else{
     //ok this works, but obviously isn't what we want
-    //mtrVal[0]=-150; //positive turns right
-    //mtrVal[1]=-150;
+    //mtrVal[0]=-delta; //positive turns right
+    //mtrVal[1]=-delta;
     mtrCtrlVolt=kp*error; //this is in volts
     mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //if this deosn't work mod 152
       
     mtrCtrlOut=((mtrCtrlVolt/7.5)*100); //was 50 but too weak
     mtrCtrlOut2=((mtrCtrlVolt2/7.5)*100);
 
-    if (mtrCtrlOut < 150){ //-150 and 150
-      mtrCtrlOut= 150;
+    if (mtrCtrlOut < delta){ //-delta and delta
+      mtrCtrlOut= delta;
     }
-    else if (mtrCtrlOut > -150){
-      mtrCtrlOut= -150;
+    else if (mtrCtrlOut > -delta){
+      mtrCtrlOut= -delta;
     }
-    if (mtrCtrlOut2<150){ //-250 and 250
-      mtrCtrlOut2=150;
+    if (mtrCtrlOut2<delta){ //-250 and 250
+      mtrCtrlOut2=delta;
     }
-    else if (mtrCtrlOut2>-150){
-      mtrCtrlOut2=-150;
+    else if (mtrCtrlOut2>-delta){
+      mtrCtrlOut2=-delta;
     }
     
     mtrVal[0]=-mtrCtrlOut;
