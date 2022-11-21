@@ -123,11 +123,6 @@ void loop() {
         Serial.println(angleError);
         Serial.println(thetaError);
       }
-      if (angleReceived > 0.0){
-        dir = 1;
-      }else{
-        dir =- 1;
-      }
       thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
@@ -162,6 +157,12 @@ void loop() {
         slaveWheel.write(0);
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
+        if (angleReceived > 0.0){
+          dir = 1;
+        }else{
+          dir =- 1;
+        abs(angleTarget);
+        }
         currentMode = TURN;
         offsetReg = 0;
       }
