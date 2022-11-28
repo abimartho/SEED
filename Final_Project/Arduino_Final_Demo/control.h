@@ -13,3 +13,5 @@ void drive(double targetError, double wheelError, int mtrVal[2]);
 // Inputs: error between the master wheel and the target possition, error between the maser and slave wheel, pointer to mtrVal array
 // Output: Updates values in mtrVal array
 void turn (int dir, double targetError, double wheelError, int mtrVal[2]);
+
+void turn2 (double targetError, double wheelError, int mtrVal[2]);

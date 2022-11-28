@@ -97,3 +97,31 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   }
 
 }
+
+void turn2(double targetError, double wheelError, int mtrVal[2]) {
+  double mtrCtrlOut = 0;
+  double mtrCtrlOut2 = 0;
+  double mtrCtrlVolt = 0;
+  double mtrCtrlVolt2 = 0;
+
+  mtrCtrlVolt = kp * targetError;
+  mtrCtrlVolt2 = mtrCtrlVolt + (wheelError * kp2); // Will probably need a fudge factor
+
+  mtrCtrlOut = ((mtrCtrlVolt / 8.0) * 100); //was 50 but too weak
+  mtrCtrlOut2 = ((mtrCtrlVolt2 / 8.0) * 100);
+    
+  if(mtrCtrlOut < -delta){ 
+    mtrCtrlOut = -delta;
+  }
+  else if(mtrCtrlOut > delta){
+    mtrCtrlOut = delta;
+  }
+  if (mtrCtrlOut2 < -delta){ 
+    mtrCtrlOut2 = -delta;
+  }
+  else if (mtrCtrlOut2 > delta){
+    mtrCtrlOut2 = delta;
+  }
+  mtrVal[0]= mtrCtrlOut;
+  mtrVal[1]= mtrCtrlOut2;
+}
