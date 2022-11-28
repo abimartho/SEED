@@ -45,7 +45,7 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
   double mtrCtrlVolt2 = 0;
   double spinOther=0;
 
-  if (dir == 1){ // Clyde is making a  Left turn
+  if (dir == 1){ // Clyde is making a Right turn
     mtrCtrlVolt=kp*error; //this is in volts
     mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //We will need to tweek kp2 so that the motors line up
     
@@ -68,7 +68,7 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
     mtrVal[0]=mtrCtrlOut;
     mtrVal[1]=mtrCtrlOut2;
   
-  } else{ // Clyde is making a Right turn
+  } else{ // Clyde is making a Left turn
     //ok this works, but obviously isn't what we want
     //mtrVal[0]=-delta; //positive turns right
     //mtrVal[1]=-delta;
