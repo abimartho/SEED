@@ -127,8 +127,8 @@ void loop() {
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
         turn(dir, rotationError, angleError, mtrVal);
-        thetaError = abs(angleTarget*(PI/1600)) - abs(thetaNow);//make sure it is the angle we want it
-     
+        //thetaError = abs(angleTarget*(PI/1600)) - abs(thetaNow);//make sure it is the angle we want it
+        thetaError = abs(angleTarget) - abs(currentCountsMaster); //Subtract Target Encoder Counts by absolute value of Master Wheel. Should mean that Ex: (1000 - 900) with 900 being the only changing number.
       
         if (thetaError <= 0.0) {
           currentMode = WAIT;
