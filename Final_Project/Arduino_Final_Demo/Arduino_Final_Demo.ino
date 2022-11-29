@@ -116,28 +116,22 @@ void loop() {
       // TODO: Run motor to reach target angle
       angleError = currentCountsMaster - currentCountsSlave; //Counts
       angleError = angleError*(PI/1600); //Radians
-      rotationError = abs(angleTarget) - abs(currentCountsMaster); //Counts
-      //rotationError = rotationError*(PI/1600);
+      rotationError = angleTarget - currentCountsMaster; //Counts
+      rotationError = rotationError*(PI/1600);
       if (i == 10){
         i = 0;
         Serial.println(angleError);
         Serial.println(rotationError);
         Serial.println(thetaError);
       }
-      thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
+      //thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
       if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
-        //turn(dir, rotationError, angleError, mtrVal);
-        if (dir == 1){
-          md.setSpeeds(200, 200);
-        }
-        else{
-          md.setSpeeds(-200,-200);
-        }
+        turn2(rotationError, angleError, mtrVal);
         //thetaError = abs(angleTarget*(PI/1600)) - abs(thetaNow);//make sure it is the angle we want it
-        thetaError = abs(angleTarget) - abs(currentCountsMaster); //Subtract Target Encoder Counts by absolute value of Master Wheel. Should mean that Ex: (1000 - 900) with 900 being the only changing number.
+        //thetaError = abs(angleTarget) - abs(currentCountsMaster); //Subtract Target Encoder Counts by absolute value of Master Wheel. Should mean that Ex: (1000 - 900) with 900 being the only changing number.
       
-        if (thetaError <= 0.0) {
+        if ((rotationError < 0.01) && (rotationError > -0.01)) {
           currentMode = WAIT;
         }else{
           md.setSpeeds(mtrVal[0],mtrVal[1]);
