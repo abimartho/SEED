@@ -132,6 +132,7 @@ void loop() {
         //thetaError = abs(angleTarget) - abs(currentCountsMaster); //Subtract Target Encoder Counts by absolute value of Master Wheel. Should mean that Ex: (1000 - 900) with 900 being the only changing number.
       
         if ((rotationError < 0.01) && (rotationError > -0.01)) {
+          md.setSpeeds(0, 0);
           currentMode = WAIT;
         }else{
           md.setSpeeds(mtrVal[0],mtrVal[1]);

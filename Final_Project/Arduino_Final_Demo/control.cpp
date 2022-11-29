@@ -99,17 +99,27 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
 }
 
 void turn2(double targetError, double wheelError, int mtrVal[2]) {
+  // Target error is the difference between the target possition and the possition of the master
+  // wheel in radians. wheelError is the difference between the two wheels in radians. mtrVal is
+  // used to pass the desired motor values back to main.
   double mtrCtrlOut = 0;
   double mtrCtrlOut2 = 0;
   double mtrCtrlVolt = 0;
   double mtrCtrlVolt2 = 0;
 
+  // calculates the desired voltage level. The master voltage is based on the difference between 
+  // it and the target value. The slave value is based on the difference between it and the master
+  // value. These values are then scaled to reflect the values that can be writtent to the motor. 
+  // In theory they should be multiplied by 400 but that ends up leading to Tokyo Drift Clyde.
   mtrCtrlVolt = kp * targetError;
   mtrCtrlVolt2 = mtrCtrlVolt + (wheelError * kp2); // Will probably need a fudge factor
 
   mtrCtrlOut = ((mtrCtrlVolt / 8.0) * 100); //was 50 but too weak
   mtrCtrlOut2 = ((mtrCtrlVolt2 / 8.0) * 100);
-    
+
+  // These if statements make sure that the output vlaues are set the values that are withing the
+  // range of values that the motor contorler can output. Delta is set lower than the theoretical 
+  // maximum again to avoid Tokyo Drift Clyde
   if(mtrCtrlOut < -delta){ 
     mtrCtrlOut = -delta;
   }
@@ -122,6 +132,8 @@ void turn2(double targetError, double wheelError, int mtrVal[2]) {
   else if (mtrCtrlOut2 > delta){
     mtrCtrlOut2 = delta;
   }
+
+  // The motor values are stored in an array, index 0 stores the maseter and index 1 stores the slave.
   mtrVal[0]= mtrCtrlOut;
   mtrVal[1]= mtrCtrlOut2;
 }
