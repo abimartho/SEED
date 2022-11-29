@@ -83,7 +83,7 @@ void loop() {
   targetMotorCounts = inchesToCounts(distanceTarget);
   currentCountsMaster = masterWheel.read();//get encoder values
   currentCountsSlave = slaveWheel.read();
-  wheelError = currentCountsMaster - currentCountsSlave;//bascially angle Error
+  wheelError = currentCountsMaster - currentCountsSlave; // The difference be master and slave wheels
   distanceError = distanceTarget - currentCountsMaster;
   
   
@@ -99,6 +99,20 @@ void loop() {
         startCMD = 0;
       }
     break;
+    
+    case SEARCH:
+      if(stopCMD == 1) {
+        md.setSpeeds(0, 0);
+        masterWheel.write(0);
+        slaveWheel.write(0);
+        delay(500);
+        currentMode = DELAY4STOP;
+      } else if(millis() % 500 < 250 && stopCMD != 1) {
+        md.setSpeeds(125, 125);
+      } else if (millis() % 500 > 250) {
+        md.setSpeeds(0, 0);
+      }
+    break;
 
     case DRIVE:
       //if(millis() >= SAMPLE_TIME + lastTime) {
@@ -110,8 +124,27 @@ void loop() {
           currentMode = STOP;
         }
       //}
+        break;
+
+    case STOP:
+      if (markerCount != 6){
+        masterWheel.write(0);
+        slaveWheel.write(0);
+        rotationError = 0;
+        angleError = 0;
+        angleTarget = 0;
+        readStatus = 6; // Tells Pi to go to next Marker
+        delay(5000);
+        offsetReg = 0;
+        markerCount += 1;
+        currentMode = SEARCH;
+      }
+      else{
+        readStatus = 7; // Tells Pi that we are done. (Keep in for now, to test CLYDE will want to be able to easily restart Clyde)
+        currentMode = START; // Can switch to "Party" once we have working
+      }
       break;
-      
+    
     case TURN:
       // TODO: Run motor to reach target angle
       angleError = currentCountsMaster - currentCountsSlave; //Counts
@@ -147,9 +180,9 @@ void loop() {
       md.setSpeeds(0,0);
       masterWheel.write(0);
       slaveWheel.write(0);
-      delay(1000);
+      delay(500);
       currentMode = DRIVE;
-    break;
+      break;
 
     case DELAY4STOP:
       //readStatus = 5; // Tell PI it is waiting to receive dimensions
@@ -159,16 +192,11 @@ void loop() {
         slaveWheel.write(0);
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
-        if (angleReceived > 0.0){
-          dir = 1;
-        }else{
-          dir =- 1;
-        abs(angleTarget);
-        }
+      }
         currentMode = TURN;
         offsetReg = 0;
       }
-    break;
+      break;
     
     case RECEIVECMD:
       if(offsetReg == 2){
@@ -176,39 +204,7 @@ void loop() {
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
         currentMode = TURN;
       }
-    break;
-
-    case SEARCH:
-      if(stopCMD == 1) {
-        md.setSpeeds(0, 0);
-        masterWheel.write(0);
-        slaveWheel.write(0);
-        currentMode = DELAY4STOP;
-      } else if(millis() % 500 < 250 && stopCMD != 1) {
-        md.setSpeeds(125, 125);
-      } else if (millis() % 500 > 250) {
-        md.setSpeeds(0, 0);
-      }
-    break;
-
-    case STOP:
-      if (markerCount != 6){
-        masterWheel.write(0);
-        slaveWheel.write(0);
-        rotationError = 0;
-        angleError = 0;
-        thetaError = 0;
-        angleTarget = 0;
-        readStatus = 6; // Tells Pi to go to next Marker
-        delay(5000);
-        offsetReg = 0;
-        markerCount += 1;
-        currentMode = SEARCH;
-      }
-      else{
-        readStatus = 7; // Tells Pi that we are done. (Keep in for now, to test CLYDE will want to be able to easily restart Clyde)
-        currentMode = START; // Can switch to "Party" once we have working
-      }
+      break;
     }  
 }
 
