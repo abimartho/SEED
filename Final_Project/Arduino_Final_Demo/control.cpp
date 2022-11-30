@@ -75,8 +75,8 @@ void turn (int dir, double error, double error2, int mtrVal[2]) {
     mtrCtrlVolt=kp*error; //this is in volts
     mtrCtrlVolt2=(mtrCtrlVolt)+(kp2*error2)+152; //if this doesn't work mod 152
       
-    mtrCtrlOut=((mtrCtrlVolt/7.5)*100); //was 50 but too weak
-    mtrCtrlOut2=((mtrCtrlVolt2/7.5)*100);
+    mtrCtrlOut=((mtrCtrlVolt/7.5)*400); //was 50 but too weak
+    mtrCtrlOut2=((mtrCtrlVolt2/7.5)*400);
 
     if (mtrCtrlOut < delta){ //-delta and delta
       mtrCtrlOut= delta;
@@ -114,11 +114,11 @@ void turn2(double targetError, double wheelError, int mtrVal[2]) {
   mtrCtrlVolt = kp * targetError;
   mtrCtrlVolt2 = mtrCtrlVolt + (wheelError * kp2); // Will probably need a fudge factor
 
-  mtrCtrlOut = ((mtrCtrlVolt / 8.0) * 100); //was 50 but too weak
-  mtrCtrlOut2 = ((mtrCtrlVolt2 / 8.0) * 100);
+  mtrCtrlOut = ((mtrCtrlVolt / 8.0) * 400); //was 50 but too weak
+  mtrCtrlOut2 = ((mtrCtrlVolt2 / 8.0) * 400);
 
-  // These if statements make sure that the output vlaues are set the values that are withing the
-  // range of values that the motor contorler can output. Delta is set lower than the theoretical 
+  // These if statements make sure that the output values are set the values that are within the
+  // range of values that the motor controller can output. Delta is set lower than the theoretical 
   // maximum again to avoid Tokyo Drift Clyde
   if(mtrCtrlOut < -delta){ 
     mtrCtrlOut = -delta;

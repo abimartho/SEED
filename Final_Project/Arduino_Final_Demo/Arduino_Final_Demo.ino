@@ -40,7 +40,7 @@ double distanceTarget = 0.0;
 double angleTarget = 0.0;
 double distanceReceived = 0.0;
 double angleReceived = 0.0;
-int targetMotorCounts = 0;
+double targetMotorCounts = 0;
 //double rotationTarget;
 
 double theta = -1.9*PI*(.5); //1.9 is fudge
@@ -66,6 +66,10 @@ int i = 0;
 
 // Array of mtrCtrlOut values, index 0 is master, index 1 is slave
 int mtrVal[2] = {0, 0};
+
+// Function Stubs
+void receiveData(int byteCount);
+void sendData();
 
 void setup() {
   pinMode(13, OUTPUT);
@@ -101,6 +105,7 @@ void loop() {
     break;
     
     case SEARCH:
+      readStatus = 0;
       if(stopCMD == 1) {
         md.setSpeeds(0, 0);
         masterWheel.write(0);
@@ -147,31 +152,24 @@ void loop() {
     
     case TURN:
       // TODO: Run motor to reach target angle
-      angleError = currentCountsMaster - currentCountsSlave; //Counts
+      angleError = abs(currentCountsMaster) - abs(currentCountsSlave); //Counts (Do we actually care or need this value? I get that it is the difference between the master and slave but if both wheels are told to turn for the same amount of time at the same speed this should remain 0)
       angleError = angleError*(PI/1600); //Radians
       rotationError = angleTarget - currentCountsMaster; //Counts
-      rotationError = rotationError*(PI/1600);
-      if (i == 10){
-        i = 0;
-        Serial.println(angleError);
-        Serial.println(rotationError);
-        Serial.println(thetaError);
-      }
-      //thetaNow = 5.875 * ((PI / 1600) * (currentCountsMaster - currentCountsSlave)) / 11;
-      if(millis() >= SAMPLE_TIME + lastTime) {
+      rotationError = rotationError*(PI/1600.0); //Radian
+      //Serial.println(rotationError);
+      //Serial.println(thetaError);
+      //if(millis() >= SAMPLE_TIME + lastTime) {
         lastTime = millis();  
-        turn2(rotationError, angleError, mtrVal);
-        //thetaError = abs(angleTarget*(PI/1600)) - abs(thetaNow);//make sure it is the angle we want it
-        //thetaError = abs(angleTarget) - abs(currentCountsMaster); //Subtract Target Encoder Counts by absolute value of Master Wheel. Should mean that Ex: (1000 - 900) with 900 being the only changing number.
+        turn2(rotationError, 0.0, mtrVal);
       
-        if ((rotationError < 0.01) && (rotationError > -0.01)) {
+        if ((rotationError < 0.1) && (rotationError > -0.1)) {
           md.setSpeeds(0, 0);
           currentMode = WAIT;
         }else{
           md.setSpeeds(mtrVal[0],mtrVal[1]);
         }
         
-      }
+      //}
       // TODO: transition to go state, reset encoders to 0
       i += 1;
       break;
@@ -192,7 +190,6 @@ void loop() {
         slaveWheel.write(0);
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
-      }
         currentMode = TURN;
         offsetReg = 0;
       }

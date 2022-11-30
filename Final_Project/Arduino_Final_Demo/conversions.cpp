@@ -11,7 +11,7 @@ double feetToCounts(double feet) {
 }
 
 double radsToCounts(double rads) {
-  return (rads / 2.5) * R;
+  return rads * R * 173.33;
 }
 
 /*int degreesToCounts(double degree) {
