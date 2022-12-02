@@ -11,27 +11,27 @@ void drive(double targetError, double wheelError, int mtrVal[2]) {
   mtrCtrlVolt = kp * targetError;
   mtrCtrlVolt2 = kp2 * wheelError + mtrCtrlVolt;
 
-  mtrCtrlOut=(mtrCtrlVolt/8.0)*400; 
-  mtrCtrlOut2=(mtrCtrlVolt2/8.0)*400;
+  mtrCtrlOut=(mtrCtrlVolt/8.0)*500; 
+  mtrCtrlOut2=(mtrCtrlVolt2/8.0)*500;
 
-  if (mtrCtrlOut < -400){ //max is 400 put to 300 to try and reduce slip
-    scale = -400 / mtrCtrlOut;
-    mtrCtrlOut = -400;
+  if (mtrCtrlOut < -500){ //max is 400 put to 300 to try and reduce slip
+    scale = -500 / mtrCtrlOut;
+    mtrCtrlOut = -500;
     mtrCtrlOut2 = scale * mtrCtrlOut2;
   }
-  else if (mtrCtrlOut > 400){
-    scale = 400 / mtrCtrlOut;
-    mtrCtrlOut = 400;
+  else if (mtrCtrlOut > 500){
+    scale = 500 / mtrCtrlOut;
+    mtrCtrlOut = 500;
     mtrCtrlOut2 = scale * mtrCtrlOut2;
   }
-  if (mtrCtrlOut2 < -400) {
-    scale = -400 / mtrCtrlOut2;
-    mtrCtrlOut2 = -400;
+  if (mtrCtrlOut2 < -500) {
+    scale = -500 / mtrCtrlOut2;
+    mtrCtrlOut2 = -500;
     mtrCtrlOut = scale * mtrCtrlOut;
   }
-  else if (mtrCtrlOut2 > 400) {
-    scale = 400 / mtrCtrlOut2;
-    mtrCtrlOut2 = 400;
+  else if (mtrCtrlOut2 > 500) {
+    scale = 500 / mtrCtrlOut2;
+    mtrCtrlOut2 = 500;
     mtrCtrlOut = scale * mtrCtrlOut;
   }
   mtrVal[0] = mtrCtrlOut;
