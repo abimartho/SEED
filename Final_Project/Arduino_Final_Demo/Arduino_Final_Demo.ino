@@ -96,7 +96,7 @@ void loop() {
   wheelError = wheelError * (PI / 1600); 
 
   
-  switch(currentMode){
+  switch(currentMode){//starts the program once command is received
     case START:
       if (startCMD == 1){
         currentMode = SEARCH;
@@ -104,7 +104,7 @@ void loop() {
       }
     break;
     
-    case SEARCH:
+    case SEARCH: //stops everything to be safe, then starts to turn, stops when marker detected
       readStatus = 0;
       if(stopCMD == 1) {
         md.setSpeeds(0, 0);
@@ -119,7 +119,7 @@ void loop() {
       }
     break;
 
-    case DRIVE:
+    case DRIVE://drives to the location requested
       //if(millis() >= SAMPLE_TIME + lastTime) {
         //lastTime = millis();
         drive(distanceError, wheelError, mtrVal);
@@ -131,7 +131,7 @@ void loop() {
       //}
         break;
 
-    case STOP:
+    case STOP://once it goes through all six it stops
       if (markerCount != 6){
         masterWheel.write(0);
         slaveWheel.write(0);
@@ -174,7 +174,7 @@ void loop() {
       i += 1;
       break;
       
-    case WAIT:
+    case WAIT://this is between trun and drive for accuracy
       md.setSpeeds(0,0);
       masterWheel.write(0);
       slaveWheel.write(0);
@@ -195,7 +195,7 @@ void loop() {
       }
       break;
     
-    case RECEIVECMD:
+    case RECEIVECMD://this is the command that tells arduino angle to turn
       if(offsetReg == 2){
         angleTarget = radsToCounts(angleReceived);
         distanceTarget = feetToCounts(distanceReceived  - 0.2);
