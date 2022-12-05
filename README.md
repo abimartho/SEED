@@ -13,4 +13,4 @@ Demo 2 involves finding and moving to an Aruco marker. Initially, the robot will
 Documentation: [SEED/Demo_2/readme.md](https://github.com/abimartho/SEED/blob/main/Demo_2/README.md)
 ### Final Demo
 The final demo involves finding and moving to 6 markers in a specified order.  
-Documentation: [SEED/Demo_2/readme.md](https://github.com/abimartho/SEED/blob/main/Final_Project/README.md)
+Documentation: [SEED/Final_Project/readme.md](https://github.com/abimartho/SEED/blob/main/Final_Project/README.md)
