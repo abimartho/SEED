@@ -1,5 +1,6 @@
 # EENG 350: SEED Lab
 ### Team 1: Aiden Reeves, Evan Tellschow, Abi Thompson, Sam Wicklund
+![Clyde the robot](https://github.com/abimartho/SEED/thumbnail_image.png)
 ## Repository Overview
 Code for course EENG 350: Systems Exploration and Engineering Design Lab. Contains the program for the initial Mini Project in [Mini_Project](https://github.com/abimartho/SEED/tree/main/Mini_Project) and the program for the full course project in [link here]
 ## Mini Project
